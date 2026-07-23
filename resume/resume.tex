@@ -1,0 +1,149 @@
+%-------------------------------------------------------------------------------
+% Sample Resume Template - EDS 6397 Group Assignment: Job Search Agent
+% This is a PLACEHOLDER template. Replace every placeholder with your candidate's
+% FICTIONAL persona content. Do not use a real person's identity or contacts.
+% Compile on Overleaf (pdflatex). Your agent edits THIS .tex source and
+% recompiles it to produce the updated PDF. Keep the section markers intact;
+% they make programmatic edits reliable.
+% The resume holds only 2-3 projects. Every project listed here must also
+% appear in your project portfolio file.
+% The compiled resume must always be exactly ONE page.
+%-------------------------------------------------------------------------------
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\pagestyle{empty}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.6in}
+\addtolength{\textheight}{1.2in}
+
+\titleformat{\section}{\large\bfseries\scshape\raggedright}{}{0em}{}[\titlerule]
+\titlespacing*{\section}{0pt}{8pt}{4pt}
+
+\newcommand{\resumeItem}[1]{\item\small{#1}}
+\newcommand{\resumeEntry}[4]{
+  \item
+  \begin{tabular*}{\textwidth}[t]{l@{\extracolsep{\fill}}r}
+    \textbf{#1} & #2 \\
+    \textit{\small#3} & \textit{\small#4} \\
+  \end{tabular*}\vspace{-4pt}
+}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.2in, itemsep=1pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{2pt}}
+\newcommand{\resumeEntryListStart}{\begin{itemize}[leftmargin=0.0in, label={}, itemsep=2pt]}
+\newcommand{\resumeEntryListEnd}{\end{itemize}}
+
+\begin{document}
+
+%----------HEADER----------
+\begin{center}
+    {\Huge \scshape Jordan Ellis} \\ \vspace{2pt}
+    Austin, TX $|$ 555-123-4567 $|$
+    \href{mailto:jordan.ellis.data@example.com}{jordan.ellis.data@example.com} $|$
+    \href{https://github.com/jordanellis-data}{github.com/jordanellis-data}
+\end{center}
+
+%----------SUMMARY----------
+\section{Professional Summary}
+% AGENT-EDIT-TARGET: summary
+Data Scientist / Machine Learning Engineer with 4 years of experience building
+and deploying ML systems across healthcare and retail/e-commerce, spanning
+predictive risk modeling, recommendation systems, and retrieval-augmented
+generation. Strong Python and SQL foundation with hands-on production
+experience in PyTorch, AWS SageMaker, and Databricks. Targets Data Scientist,
+Machine Learning Engineer, and Applied Scientist roles.
+
+%----------EDUCATION----------
+\section{Education}
+\resumeEntryListStart
+  \resumeEntry{Fictional State University}{Austin, TX}
+    {M.S. in Data Science, GPA 3.8/4.0}{May 2022}
+  \resumeEntry{Northbridge University}{Denver, CO}
+    {B.S. in Statistics}{May 2020}
+\resumeEntryListEnd
+
+%----------EXPERIENCE----------
+\section{Experience}
+\resumeEntryListStart
+
+  \resumeEntry{Data Scientist}{Jun 2022 -- Present}
+    {Meridian Health Analytics}{Austin, TX}
+  \resumeItemListStart
+    % AGENT-EDIT-TARGET: experience-bullet-1
+    \resumeItem{Built and deployed a patient readmission risk model (XGBoost,
+      SHAP) used by a regional hospital network's care-coordination team,
+      achieving 0.81 AUC on held-out data.}
+    % AGENT-EDIT-TARGET: experience-bullet-2
+    \resumeItem{Designed feature pipelines over EHR and claims data in SQL and
+      Python, cutting model retraining turnaround time from two weeks to
+      three days.}
+    \resumeItem{Presented model performance and risk findings to clinical
+      stakeholders and mentored two junior data analysts.}
+  \resumeItemListEnd
+
+  \resumeEntry{Data Science Intern}{Jun 2021 -- Aug 2021}
+    {Northlight Retail Co.}{Denver, CO}
+  \resumeItemListStart
+    \resumeItem{Prototyped a collaborative-filtering recommendation model for
+      the online product catalog, evaluated via offline A/B simulation.}
+    \resumeItem{Cleaned and joined multi-source sales and clickstream data to
+      support the personalization team's feature backlog.}
+  \resumeItemListEnd
+
+\resumeEntryListEnd
+
+%----------PROJECTS----------
+% The agent may SWAP any project below with a more relevant one from the
+% portfolio file. Swapped-in projects must be formatted exactly like these.
+\section{Projects}
+\resumeEntryListStart
+
+  % AGENT-SWAP-TARGET: project-1
+  \resumeEntry{Patient Readmission Risk Predictor}{2023}
+    {Tech Stack: Python, XGBoost, SHAP, SQL}{Healthcare}
+  \resumeItemListStart
+    \resumeItem{Predicted 30-day hospital readmission risk from EHR and claims
+      data, using SHAP to produce clinician-facing explanations for each
+      score; piloted with a regional hospital network.}
+  \resumeItemListEnd
+
+  % AGENT-SWAP-TARGET: project-2
+  \resumeEntry{E-commerce Product Recommendation Engine}{2022}
+    {Tech Stack: Python, PyTorch, Embeddings, Redis}{Retail / E-commerce}
+  \resumeItemListStart
+    \resumeItem{Built a hybrid collaborative-filtering and embedding-based
+      recommender served behind a low-latency Redis lookup layer, lifting
+      click-through rate on recommended items by 14\% in an A/B test.}
+  \resumeItemListEnd
+
+  % AGENT-SWAP-TARGET: project-3
+  \resumeEntry{Customer Support RAG Chatbot}{2024}
+    {Tech Stack: Python, LangChain, Pinecone, OpenAI API}{Retail / E-commerce}
+  \resumeItemListStart
+    \resumeItem{Built a retrieval-augmented generation chatbot over product
+      manuals and policy documents, cutting average tier-1 ticket handling
+      time by 22\% in a pilot rollout.}
+  \resumeItemListEnd
+
+\resumeEntryListEnd
+
+%----------SKILLS----------
+\section{Skills}
+% AGENT-EDIT-TARGET: skills
+\begin{itemize}[leftmargin=0.2in, itemsep=1pt]
+  \small\item{\textbf{Languages:} Python, SQL, R}
+  \small\item{\textbf{ML \& Data:} PyTorch, TensorFlow, scikit-learn, XGBoost, Pandas}
+  \small\item{\textbf{Systems \& Tools:} AWS SageMaker, Databricks, Docker, Git, LangChain}
+\end{itemize}
+
+\end{document}

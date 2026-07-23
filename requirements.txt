@@ -2,3 +2,4 @@ openai
 anthropic
 requests
 python-dotenv
+pypdf
