@@ -44,15 +44,21 @@ source venv/bin/activate        # Mac/Linux
 pip install -r requirements.txt
 ```
 
-`.env` contents (Ollama, no real API key needed):
-```
-OPENAI_API_KEY=ollama
-OLLAMA_BASE_URL=http://localhost:11434/v1
-OLLAMA_MODEL=llama3.2
-```
+### Ollama setup (if not already installed on your machine)
 
-Ollama must be running locally (`ollama serve`, or the desktop app) with the
-model pulled: `ollama pull llama3.2`.
+1. Install Ollama from https://ollama.com/download (Mac/Windows/Linux).
+2. Pull the model this project uses: `ollama pull llama3.2`
+3. Make sure the Ollama server is running: `ollama serve` (or just open the
+   Ollama desktop app — it runs the server in the background).
+4. Create a `.env` file in the repo root (this file is git-ignored, so
+   you'll need to create it yourself even after cloning) with:
+   ```
+   OPENAI_API_KEY=ollama
+   OLLAMA_BASE_URL=http://localhost:11434/v1
+   OLLAMA_MODEL=llama3.2
+   ```
+5. Verify everything works end-to-end: `python test_llm.py` should print a
+   live response from the model.
 
 ## Minimal LLM access snippet (copy this pattern everywhere)
 
