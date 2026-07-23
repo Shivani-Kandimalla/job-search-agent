@@ -1,0 +1,77 @@
+CANDIDATE PROJECT PORTFOLIO
+============================
+Fictional candidate: Jordan Ellis (no real identity, contact info, or employer)
+This file lists ALL projects the candidate has done. The resume (resume.tex)
+surfaces only 2-3 of these (marked "ON RESUME" below); the rest exist here
+so the agent's Scoring, Fit Analysis, and Tailoring tools can judge deeper
+relevance and, where useful, swap a resume project for a better-fitting one
+from this list.
+
+--------------------------------------------------------------------------
+PROJECT 1: Patient Readmission Risk Predictor  [ON RESUME]
+Domain/Industry: Healthcare
+Tech stack: Python, XGBoost, scikit-learn, SQL, SHAP, Pandas
+Description: Built a model that predicts a patient's 30-day hospital
+readmission risk using historical EHR and claims data. Engineered features
+from diagnosis codes, prior admission history, and lab results. Used SHAP
+values to produce clinician-facing explanations for each risk score.
+Achieved a 0.81 AUC on held-out data and the model was piloted with a
+regional hospital network's care-coordination team.
+--------------------------------------------------------------------------
+PROJECT 2: E-commerce Product Recommendation Engine  [ON RESUME]
+Domain/Industry: Retail / E-commerce
+Tech stack: Python, PyTorch, collaborative filtering, embeddings, Redis
+Description: Designed and trained a hybrid recommendation system combining
+collaborative filtering with learned product embeddings to personalize
+product listings for an online retail catalog. Deployed the model behind a
+low-latency serving layer using Redis for embedding lookups, improving
+click-through rate on recommended items by 14% in an A/B test.
+--------------------------------------------------------------------------
+PROJECT 3: Customer Support RAG Chatbot  [ON RESUME]
+Domain/Industry: Retail / E-commerce (Customer Support)
+Tech stack: Python, LangChain, OpenAI API, Pinecone (vector database), RAG
+Description: Built a retrieval-augmented generation chatbot that answers
+customer support questions by retrieving relevant passages from product
+manuals, return policies, and FAQ documents before generating a response.
+Reduced average human agent handling time for tier-1 tickets by 22% during
+a pilot rollout with the customer support team.
+--------------------------------------------------------------------------
+PROJECT 4: Medical Imaging Anomaly Detector  [PORTFOLIO ONLY]
+Domain/Industry: Healthcare
+Tech stack: Python, PyTorch, convolutional neural networks (CNNs), OpenCV
+Description: Trained a CNN-based classifier to flag anomalies in chest
+X-ray images for radiologist review, using a public de-identified imaging
+dataset. Applied data augmentation and transfer learning from a pretrained
+ResNet backbone. Focused on minimizing false negatives given the clinical
+review workflow, achieving 0.89 recall at an acceptable false-positive
+rate for triage use.
+--------------------------------------------------------------------------
+PROJECT 5: Fraud Detection Pipeline for Payments  [PORTFOLIO ONLY]
+Domain/Industry: Banking / Fintech
+Tech stack: Python, scikit-learn, Kafka, real-time feature scoring, SQL
+Description: Built a real-time transaction-scoring pipeline that consumes
+a Kafka stream of payment events, computes rolling behavioral features
+per account, and scores each transaction for fraud risk within a
+sub-200ms latency budget. Reduced false-decline rate on legitimate
+transactions by 9% versus the prior rules-only system while maintaining
+fraud catch rate.
+--------------------------------------------------------------------------
+PROJECT 6: Demand Forecasting for Retail Supply Chain  [PORTFOLIO ONLY]
+Domain/Industry: Retail / Supply Chain
+Tech stack: Python, Prophet, PySpark, time-series forecasting
+Description: Built SKU-level demand forecasting models for a multi-region
+retail supply chain, blending Prophet-based seasonal decomposition with
+gradient-boosted correction models for promotional lift. Forecasts fed
+directly into inventory replenishment planning, reducing stockouts on
+top-selling SKUs by 11%.
+--------------------------------------------------------------------------
+PROJECT 7: Construction Site Safety Vision Monitor  [PORTFOLIO ONLY]
+Domain/Industry: Construction Technology
+Tech stack: Python, PyTorch, YOLO, OpenCV, edge deployment
+Description: Prototyped a computer-vision pipeline that analyzes job-site
+camera photos to detect personal protective equipment (PPE) violations
+(missing hard hats, missing high-visibility vests) using a fine-tuned YOLO
+object detector. Designed to run on low-connectivity job sites with
+batched on-device inference rather than requiring constant cloud
+connectivity.
+--------------------------------------------------------------------------

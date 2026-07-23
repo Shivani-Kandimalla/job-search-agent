@@ -1,0 +1,46 @@
+{
+  "candidate_name": "Jordan Ellis",
+  "note": "Fully fictional persona created for this assignment. No real names, contact details, or identities.",
+  "degree": "M.S. in Data Science",
+  "years_of_experience": 4,
+  "current_title": "Data Scientist / Machine Learning Engineer",
+
+  "preferences": {
+    "preferred_locations": [
+      "Remote",
+      "San Francisco, CA",
+      "New York, NY",
+      "Minnetonka, MN",
+      "Seattle, WA"
+    ],
+    "remote_only": false,
+    "years_of_experience": 4,
+    "companies_to_exclude": [
+      "General Motors",
+      "Teradyne"
+    ],
+    "target_job_titles": [
+      "Data Scientist",
+      "Machine Learning Engineer",
+      "Applied Scientist",
+      "AI Engineer",
+      "NLP Engineer",
+      "Applied Data Scientist"
+    ]
+  },
+
+  "master_skills_list": [
+    "Python", "SQL", "R",
+    "PyTorch", "TensorFlow", "scikit-learn", "XGBoost",
+    "Pandas", "NumPy",
+    "AWS (SageMaker, S3, Lambda)", "Databricks", "Apache Spark",
+    "Docker", "Kubernetes (basic)", "Git", "CI/CD (GitHub Actions)",
+    "LangChain", "Retrieval-Augmented Generation (RAG)", "Vector Databases (Pinecone)",
+    "OpenAI API", "Natural Language Processing (NLP)", "Computer Vision (basic)",
+    "Tableau", "Power BI",
+    "A/B Testing", "Statistics", "Time-series Forecasting (Prophet)",
+    "Kafka (basic)", "Apache Airflow"
+  ],
+
+  "note_on_gaps": "Skills such as GraphQL and Terraform are deliberately NOT included above, even though a real candidate would plausibly know some things not listed. This is intentional: GraphQL becomes a memory-learned fact during the human review pause (Section 3.5), and Terraform remains a genuine, honestly-reported gap throughout."
+}
