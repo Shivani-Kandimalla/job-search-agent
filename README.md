@@ -5,7 +5,7 @@ jobs from a real dataset, explains fit, tailors a one-page resume (LaTeX →
 PDF), pauses once for human approval (with memory), and generates cover
 letters.
 
-## Decisions locked in by Person 1 (Foundation stage)
+## Decisions locked in during the Foundation workstream
 
 - **LLM provider:** Local **Ollama** running `llama3.2`. No paid API key
   required. Ollama's OpenAI-compatible endpoint (`/v1`) is used via the
@@ -16,10 +16,10 @@ letters.
   data/            jobs.csv, persona_preferences.json, portfolio.txt
   resume/          resume.tex, compiled PDFs
   agent/tools/     filtering.py, scoring.py, fit_analysis.py, tailoring.py, cover_letter.py
-  agent/agent.py   the single-agent orchestrator (Stage 5)
+  agent/agent.py   the single-agent orchestrator (built in the final workstream)
   memory/          memory.json (written/read by the agent at runtime)
   outputs/         one folder per job: job details, resume before/after, cover letter, fit analysis
-  handoff/         stage-to-stage handoff notes (this is our "no meetings" sync mechanism)
+  handoff/         workstream-to-workstream handoff notes (this is our "no meetings" sync mechanism)
   ```
 - **Memory file format:** JSON. Schema:
   ```json
@@ -77,7 +77,7 @@ print(response.choices[0].message.content)
 
 Tested working — see `test_llm.py`.
 
-## LaTeX (for resume compilation, Stage 1 step 3 / Stage 3 tailoring)
+## LaTeX (for resume compilation and later resume tailoring)
 
 Installed via Homebrew BasicTeX:
 ```bash
@@ -90,6 +90,8 @@ Verify: `pdflatex --version`. Missing packages get installed on demand:
 sudo tlmgr install <package-name>
 ```
 
-## Pipeline stages / ownership
+## Pipeline workstreams / ownership
 
-See `handoff/` for the stage-by-stage relay plan and handoff notes.
+See `PLAN.md` for the full relay plan (what each workstream builds, the
+decisions it owns, and the handoff package it produces), and `handoff/`
+for the actual handoff notes written as each workstream completes.

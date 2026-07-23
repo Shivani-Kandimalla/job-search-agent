@@ -1,4 +1,4 @@
-# Handoff: Person 1 → Person 2
+# Handoff: Foundation → Scoring + Fit Analysis
 
 ## Decisions made
 - LLM provider: local Ollama (`llama3.2`), OpenAI-compatible endpoint. See `README.md`.
@@ -14,7 +14,7 @@
 - `data/persona_preferences.json` — locations, years experience, excluded
   companies, target job titles, master skills list. Note: `GraphQL` and
   `Terraform` are deliberately NOT in the master skills list — reserved for
-  the memory/review-pause demo in Stage 4.
+  the memory/review-pause demo further down the pipeline.
 - `data/portfolio.txt` — 7 projects across 4 domains (Healthcare, Retail/
   E-commerce, Banking/Fintech, Construction Technology). Projects 1-3 are
   marked `[ON RESUME]` and must appear in `resume.tex` once it exists;
@@ -37,7 +37,7 @@
   `data/portfolio.txt` (Patient Readmission Risk Predictor, E-commerce
   Product Recommendation Engine, Customer Support RAG Chatbot), formatted
   identically. `AGENT-EDIT-TARGET` / `AGENT-SWAP-TARGET` comments were kept
-  intact for Stage 3's programmatic edits.
+  intact for the Resume Tailoring workstream's programmatic edits.
 - `resume/resume.pdf` — compiled with `pdflatex`, confirmed **exactly 1
   page** both by pdflatex's own report and independently via `pypdf`
   (`len(PdfReader("resume.pdf").pages) == 1`).
@@ -49,14 +49,17 @@
   with the template's existing `\addtolength` margin tweaks), `tabularx`
   removed (unused — the template only relies on the built-in `tabular*`
   environment), `babel` removed (non-essential, just English hyphenation).
-  Person 3 (Tailoring) should reuse this same working `resume.tex` preamble
-  when generating per-job resume variants — don't reintroduce those three
-  packages.
-- `pypdf` was added to `requirements.txt` — needed by Stage 3's one-page
-  verification tool anyway, installed and tested now.
+  Whoever picks up Resume Tailoring should reuse this same working
+  `resume.tex` preamble when generating per-job resume variants — don't
+  reintroduce those three packages.
+- `pypdf` was added to `requirements.txt` — needed by the Resume Tailoring
+  workstream's one-page verification tool anyway, installed and tested now.
 
-## What to build next (Stage 2)
+## What to build next (Scoring + Fit Analysis)
 See the 7 kept jobs above — that's your scoring input. Use
 `data/jobs.csv`, `data/portfolio.txt`, `data/persona_preferences.json`
 (master skills list + years of experience), and `memory/memory.json`
 (currently empty) as the four inputs to `score_job(...)`.
+
+See `PLAN.md` for the full workstream breakdown (steps, decisions owned,
+and what to hand off next).

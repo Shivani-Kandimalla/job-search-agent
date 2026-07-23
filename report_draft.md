@@ -1,4 +1,4 @@
-# Report Draft — Stage 1 contributions (Person 1: Foundation)
+# Report Draft — Foundation workstream contributions
 
 ## Filtering Rules (Section 3.1)
 
@@ -53,9 +53,9 @@ specific, human-readable reason.
   `agent/tools/filtering.py`'s `__main__` output for the full list of
   rejection reasons per job.
 
-This gives the Scoring Tool (Stage 2) a healthy, domain-diverse candidate
-pool: two Healthcare roles, two Retail/E-commerce roles, two general
-Tech/AI roles, and one Construction Technology role — the last of which
-lines up directly with the candidate's portfolio-only "Construction Site
-Safety Vision Monitor" project, setting up a strong project-swap
-demonstration in Stage 3.
+This gives the Scoring Tool (built in the Scoring + Fit Analysis workstream)
+a healthy, domain-diverse candidate pool: two Healthcare roles, two
+Retail/E-commerce roles, two general Tech/AI roles, and one Construction
+Technology role — the last of which lines up directly with the candidate's
+portfolio-only "Construction Site Safety Vision Monitor" project, setting
+up a strong project-swap demonstration in the Resume Tailoring workstream.
