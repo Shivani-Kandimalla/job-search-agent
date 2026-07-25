@@ -1,21 +1,21 @@
 {
   "relevant_experience": {
-    "status": "x",
-    "citation": "(model did not provide a citation for this dimension)",
-    "explanation": ""
+    "status": "check",
+    "citation": "Built and deployed a patient readmission risk model (XGBoost, SHAP) for a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.",
+    "explanation": "The candidate has experience in predictive modeling and deployment, which aligns with the job posting's requirements."
   },
   "projects": {
-    "status": "check",
-    "citation": "E-commerce Product Recommendation Engine [ON RESUME] | Domain: Retail / E-commerce | Tech: Python, PyTorch, collaborative filtering, embeddings, Redis | Designed and trained a hybrid recommendation system combining collaborative filtering with learned product embeddings to personalize product listings for an online retail catalog.",
-    "explanation": ""
+    "status": "x",
+    "citation": "(model did not provide a citation for this dimension)",
+    "explanation": "Although the candidate has built recommender systems and chatbots, their projects do not directly address the job posting's specific requirements for search ranking, browse personalization, semantic retrieval, and query understanding."
   },
   "project_swap": {
-    "recommended": false,
-    "weak_resume_project": null,
-    "better_portfolio_project": null,
-    "reasoning": "Current on-resume projects are retained as already optimal (the model's suggested swap did not name two verifiable, existing projects, so it was discarded per the Evidence Rule)."
+    "recommended": true,
+    "weak_resume_project": "E-commerce Product Recommendation Engine",
+    "better_portfolio_project": "Demand Forecasting for Retail Supply Chain",
+    "reasoning": "The candidate's recommender system project is strong, but the demand forecasting project better aligns with the job posting's requirements for search ranking and personalization. The construction site safety vision monitor project does not directly relate to the job posting's domain."
   },
-  "overall_summary": "While the candidate has some relevant experience and skills, their background is not a perfect fit for the job posting. The E-commerce Product Recommendation Engine project is a strong example of their ability to design and train recommendation systems, but it does not directly address the search ranking and browse personalization aspects of the job. Swapping in the Medical Imaging Anomaly Detector project could help bridge this gap, but it requires careful consideration of how to apply its skills and expertise to the new context.",
+  "overall_summary": "While the candidate has relevant experience in predictive modeling and deployment, their projects do not directly address the job posting's specific requirements. They have a strong foundation in recommender systems, but may need to develop skills in search ranking, browse personalization, semantic retrieval, and query understanding.",
   "seniority": {
     "status": "check",
     "citation": "Candidate has 4 years of experience (persona_preferences.json); posting lists '3+' (3+ years required).",

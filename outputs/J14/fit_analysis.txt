@@ -1,7 +1,7 @@
 FIT ANALYSIS: MLOps Engineer, Machine Learning Engineer (Remote) @ Experian Health  [J14]
 Deterministic score: 0.7727  (skill_match=0.5455, experience_alignment=1.0, domain_alignment=1.0)
 
-✅ Relevant Experience: The candidate has experience in the healthcare domain, specifically with predictive risk modeling, which aligns with the job posting's requirements.
+✅ Relevant Experience: The candidate has relevant experience in healthcare, specifically with predictive risk modeling and deployment of machine learning models.
    Citation: Built and deployed a patient readmission risk model (XGBoost, SHAP) used by a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.
 ✅ Seniority: Meets the seniority bar: 4 years >= 3+ required.
    Citation: Candidate has 4 years of experience (persona_preferences.json); posting lists '3+' (3+ years required).
@@ -9,13 +9,13 @@ Deterministic score: 0.7727  (skill_match=0.5455, experience_alignment=1.0, doma
    Citation: Posting accepts a degree '...or related field'; candidate holds: Data Science, Statistics.
 ✅ Core Skills: 55% of required skills are evidenced somewhere in the candidate's real profile (meets the 50% bar).
    Citation: On resume: Python, AWS SageMaker, Docker. Evidenced elsewhere in profile: Lambda, TensorFlow Serving. Genuine gaps: Step Functions, Kubernetes (EKS), MLflow, Kubeflow, Terraform, CloudFormation.
-❌ Projects: Although the candidate has built and deployed a patient readmission risk model, it does not directly address the operationalization of ML models on AWS or the development of scalable MLOps pipelines for model training, validation, deployment, and monitoring.
+❌ Projects: Although the candidate has built and deployed a patient readmission risk model, it is not directly related to the job posting's requirements for operationalizing ML models on AWS. The candidate's experience with E-commerce Product Recommendation Engine and Customer Support RAG Chatbot is also not directly relevant to the healthcare domain required by the job posting.
    Citation: (model did not provide a citation for this dimension)
 
 Missing skills -- evidenced elsewhere (tailoring may add): Lambda, TensorFlow Serving
 Missing skills -- genuine gap (never add): Step Functions, Kubernetes (EKS), MLflow, Kubeflow, Terraform, CloudFormation
 
 → Swap recommended: replace "Patient Readmission Risk Predictor" with "Medical Imaging Anomaly Detector".
-   Reasoning: The candidate's current project on patient readmission risk prediction does not align with the job posting's requirements for operationalizing ML models on AWS. The Medical Imaging Anomaly Detector project, on the other hand, demonstrates experience in healthcare and machine learning, making it a suitable replacement.
+   Reasoning: The candidate's current projects on resume are not directly relevant to the healthcare domain required by the job posting. The Medical Imaging Anomaly Detector project, however, has a strong connection to the healthcare domain and could be a good fit for this role.
 
-Overall: While the candidate has relevant experience in the healthcare domain and has built and deployed predictive risk models, their current projects do not directly address the job posting's requirements for operationalizing ML models on AWS or developing scalable MLOps pipelines. The Medical Imaging Anomaly Detector project is a suitable replacement that demonstrates experience in machine learning and the healthcare domain.
+Overall: While the candidate has some relevant experience in machine learning and deployment of models, their current projects are not directly related to the healthcare domain required by the job posting. The Medical Imaging Anomaly Detector project shows promise as a potential swap-in candidate.

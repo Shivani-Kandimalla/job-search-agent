@@ -169,6 +169,15 @@ Job **J21** (Target, Sr Applied Data Scientist — Search & Browse):
 > different, still-relevant technical depth (time-series forecasting,
 > large-scale data pipelines).
 
+A second validated swap example, job **J14** (Experian Health, MLOps
+Engineer): replace **"Patient Readmission Risk Predictor"** with
+**"Medical Imaging Anomaly Detector"** — both are Healthcare-domain
+projects, but the posting's AWS/MLOps-pipeline focus made the tailoring
+team want a different real project than the default resume pick. Job
+**J18** came back "current projects are already optimal" (a legitimate,
+non-swap outcome — the resume's existing skills already cover 80% of the
+posting's needs).
+
 Full saved fit analyses for all Top 3 jobs: `outputs/J18/fit_analysis.txt`,
 `outputs/J21/fit_analysis.txt`, `outputs/J14/fit_analysis.txt` (plus
 `.json` versions for the Tailoring workstream to consume programmatically).

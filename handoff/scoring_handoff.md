@@ -68,12 +68,16 @@ needs, notably:
   the resume (they're real, just not on the resume text yet).
 - `skill_buckets.genuine_gap` — skills you must never add.
 - `project_swap` — `{recommended, weak_resume_project, better_portfolio_project, reasoning}`.
-  Only J21 got a validated swap recommendation this run (replace
-  "E-commerce Product Recommendation Engine" with "Demand Forecasting for
-  Retail Supply Chain"); J18 and J14 came back "already optimal" — that's
-  a legitimate outcome, not a bug, but feel free to re-run
-  `fit_analysis.py` (it's stochastic at temperature 0.2) if you want a
-  second swap example for variety.
+  J21 got a validated swap recommendation (replace "E-commerce Product
+  Recommendation Engine" with "Demand Forecasting for Retail Supply
+  Chain"); J14 also got one (replace "Patient Readmission Risk Predictor"
+  with "Medical Imaging Anomaly Detector"); J18 came back "already
+  optimal" — that's a legitimate outcome, not a bug (its resume skills
+  already cover 80% of the posting). Note: `fit_analysis.py` calls a local
+  LLM at temperature 0.2, so re-running it can change these specific
+  recommendations slightly — if you re-run it, re-check
+  `outputs/*/fit_analysis.json` against whatever you cite in the report so
+  the two don't drift out of sync (this bit us once already).
 - `relevant_experience`, `education`, `seniority`, `core_skills`,
   `projects` — the 5 required dimensions, each with `status` (`check`/`x`)
   and a `citation` you can quote directly in tailored bullet points.

@@ -331,23 +331,38 @@ def analyze_fit(job: dict, profile: dict, score_breakdown: dict = None, retries:
     score_breakdown = score_breakdown or score_job(job, profile)
     user_prompt = _build_user_prompt(job, profile, skill_buckets, score_breakdown)
 
+    def _is_blank(entry: dict) -> bool:
+        entry = entry or {}
+        return not (entry.get("citation") or "").strip() and not (entry.get("explanation") or "").strip()
+
     last_error = None
+    parsed = None
     for attempt in range(retries + 1):
         raw = chat(
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
             ],
-            temperature=0.2,
+            # Slightly higher temperature on retries so a re-ask isn't just
+            # a coin-flip repeat of the same blank/low-quality response.
+            temperature=0.2 if attempt == 0 else 0.4,
             response_format={"type": "json_object"},
         )
         try:
-            parsed = _extract_json(raw)
-            break
+            candidate = _extract_json(raw)
         except (ValueError, json.JSONDecodeError) as e:
             last_error = e
             continue
-    else:
+
+        parsed = candidate
+        is_last_attempt = attempt == retries
+        both_blank = _is_blank(candidate.get("relevant_experience")) and _is_blank(candidate.get("projects"))
+        if not both_blank or is_last_attempt:
+            break
+        # Both judgment dimensions came back empty -- worth one more try
+        # before falling back to placeholder text.
+
+    if parsed is None:
         raise RuntimeError(
             f"Model failed to return valid JSON after {retries + 1} attempts. "
             f"Last error: {last_error}"
@@ -357,6 +372,8 @@ def analyze_fit(job: dict, profile: dict, score_breakdown: dict = None, retries:
         entry = parsed.get(dim) or {}
         if not entry.get("citation"):
             entry["citation"] = "(model did not provide a citation for this dimension)"
+        if not entry.get("explanation"):
+            entry["explanation"] = "(model did not provide an explanation for this dimension)"
         if entry.get("status") not in ("check", "x"):
             entry["status"] = "x"
         parsed[dim] = entry

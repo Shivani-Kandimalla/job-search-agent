@@ -1,20 +1,20 @@
 FIT ANALYSIS: AI Engineer: Computer Vision, LLMs & ML @ Flexgen Construction Technology  [J18]
 Deterministic score: 0.9  (skill_match=0.8, experience_alignment=1.0, domain_alignment=1.0)
 
-❌ Relevant Experience: While Jordan has experience with data science and machine learning, their background is not directly related to the construction industry or computer vision.
-   Citation: No direct relation to construction technology; previous work in healthcare and retail/e-commerce
+❌ Relevant Experience: Although the candidate has relevant experience in machine learning and data science, it does not directly align with the requirements of this job posting, which focuses on construction technology and computer vision.
+   Citation: No direct relation to construction technology or AI engineering; prior experience is in healthcare and retail/e-commerce.
 ✅ Seniority: Meets the seniority bar: 4 years >= 2+ required.
    Citation: Candidate has 4 years of experience (persona_preferences.json); posting lists '2-3+' (2+ years required).
 ✅ Education: No education requirement was stated in the posting, so the candidate's degree(s) are not a blocker.
    Citation: Posting does not state a specific degree requirement; candidate holds: Data Science, Statistics.
 ✅ Core Skills: 80% of required skills are evidenced somewhere in the candidate's real profile (meets the 50% bar).
    Citation: On resume: Python, PyTorch, TensorFlow, RAG, embeddings, LangChain. Evidenced elsewhere in profile: vector databases, computer vision (YOLO, Segment Anything). Genuine gaps: JAX, LlamaIndex.
-✅ Projects: Jordan's projects demonstrate expertise in machine learning, data science, and software development, which are relevant to the job posting.
-   Citation: All three projects are relevant to the job posting's requirements; e.g., 'Patient Readmission Risk Predictor' uses SHAP for clinician-facing explanations and 'E-commerce Product Recommendation Engine' employs embeddings for personalized product listings.
+✅ Projects: The candidate has experience with building predictive models, recommendation systems, and retrieval-augmented generation chatbots, which are relevant to the requirements of this job posting.
+   Citation: Patient Readmission Risk Predictor, E-commerce Product Recommendation Engine, Customer Support RAG Chatbot are all relevant to AI engineering and machine learning.
 
 Missing skills -- evidenced elsewhere (tailoring may add): vector databases, computer vision (YOLO, Segment Anything)
 Missing skills -- genuine gap (never add): JAX, LlamaIndex
 
 → Current projects are already optimal. Current on-resume projects are retained as already optimal (the model's suggested swap did not name two verifiable, existing projects, so it was discarded per the Evidence Rule).
 
-Overall: While Jordan has some relevant experience and skills, their background is not directly related to construction technology. Their projects demonstrate expertise in machine learning and data science, but the candidate would benefit from highlighting more direct connections to the industry.
+Overall: While the candidate has some relevant experience and skills, they lack direct alignment with the construction technology and AI engineering requirements of this job posting. However, their portfolio projects show potential for application in these areas.
