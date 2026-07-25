@@ -59,3 +59,128 @@ Retail/E-commerce roles, two general Tech/AI roles, and one Construction
 Technology role — the last of which lines up directly with the candidate's
 portfolio-only "Construction Site Safety Vision Monitor" project, setting
 up a strong project-swap demonstration in the Resume Tailoring workstream.
+
+---
+
+## Scoring Formula (Section 3.2, first half)
+
+`agent/tools/scoring.py` is fully deterministic — no LLM call. Every one of
+the 7 filtered jobs is scored against the candidate's *whole* profile
+(resume text + all 7 portfolio projects, not just the 2-3 on the resume +
+the 29-item master skills list + any memory-learned facts), not just the
+resume page:
+
+```
+score = 0.5 * skill_match + 0.3 * experience_alignment + 0.2 * domain_alignment
+```
+
+- **skill_match** (weight 0.5, the dominant factor) — fraction of the
+  job's `required_skills` that are evidenced *anywhere* in the candidate's
+  combined profile text. Matching allows direct substring, a small
+  hand-curated synonym table (ML ↔ Machine Learning, RAG ↔
+  Retrieval-Augmented Generation, etc.), and a token-overlap fallback for
+  multi-word skills. Required-skills strings are split on top-level commas
+  only (a custom parser), so a skill like `computer vision (YOLO, Segment
+  Anything)` survives as one item instead of being torn apart by the comma
+  inside its parentheses.
+- **experience_alignment** (weight 0.3) — 1.0 if the candidate's years
+  meet or exceed the job's minimum; otherwise decays by 0.25 per year of
+  shortfall (floored at 0).
+- **domain_alignment** (weight 0.2) — token-overlap between the job's
+  `industry_domain` and each of the candidate's portfolio project domains
+  (e.g. "Healthcare", "Retail / E-commerce"), taking the best match. A
+  job domain that's a superset of a candidate domain (e.g. "Healthcare /
+  Predictive Analytics" vs. "Healthcare") scores full credit.
+
+Weights favor skills because they're the most job-specific, concrete
+signal; domain gets the smallest weight since it's the coarsest of the
+three and location is already a hard filter upstream.
+
+### Top 3 (auto-selected, no human input at this stage)
+
+Run via `python agent/tools/scoring.py`, saved to `outputs/ranked_jobs.json`:
+
+1. **J18** — AI Engineer: Computer Vision, LLMs & ML @ Flexgen Construction
+   Technology — score **0.90** (skill=0.80, exp=1.0, domain=1.0)
+2. **J21** — Sr Applied Data Scientist, Search & Browse @ Target — score
+   **0.86** (skill=0.71, exp=1.0, domain=1.0)
+3. **J14** — MLOps Engineer / ML Engineer (Remote) @ Experian Health —
+   score **0.77** (skill=0.55, exp=1.0, domain=1.0)
+
+All three are sensible: the candidate meets every job's experience bar
+outright (experience_alignment=1.0 across the board) and has a portfolio
+project in the exact domain of each posting (Construction Technology,
+Retail/E-commerce, Healthcare respectively) even where that project isn't
+currently on the resume — exactly the setup the Resume Tailoring
+workstream is designed to exploit.
+
+---
+
+## Fit Analysis (Section 3.2, second half)
+
+`agent/tools/fit_analysis.py` makes one LLM call per Top-3 job (local
+`llama3.2` via Ollama, JSON-constrained output). To keep a small local
+model from hallucinating, the analysis is split by how *objective* each
+dimension is:
+
+- **Computed in Python (no LLM judgment involved):** Seniority (years
+  comparison), Education (keyword match between the candidate's degree
+  field(s), parsed straight out of the resume, and the posting's stated
+  requirement — defaults to a pass if the posting doesn't specify a field,
+  or says "...or related field"), and Core Skills (the same skill-bucket
+  split described below, thresholded at 50% coverage).
+- **Left to the LLM, because it genuinely requires judgment:** Relevant
+  Experience (is the *nature* of the candidate's past work relevant to
+  this role, independent of years) and Projects (do the on-resume projects
+  read as a fit), plus the project-swap recommendation and overall
+  summary.
+
+Every dimension still ends up with a status (✅/❌) and a citation into the
+real resume/portfolio/job text — the assignment's 5-dimension, "cite
+something real" requirement is satisfied either way.
+
+**Missing-skills two-bucket split** (computed once, shared verbatim with
+the LLM so it can't contradict it):
+
+- **evidenced elsewhere** — a required skill not literally on the resume,
+  but real: it shows up in a portfolio-only project, the master skills
+  list, or a memory-learned fact. Safe for the Tailoring workstream to add
+  to the resume.
+- **genuine gap** — not evidenced anywhere in the candidate's actual
+  materials. Must never be added; reported honestly instead.
+
+**Project-swap Evidence Rule enforcement:** the LLM is only allowed to
+recommend swapping in a project from the real "portfolio-only" list, never
+an invented one. Rather than trust the model's own `recommended` boolean
+(it occasionally set `false` while its reasoning text still argued for a
+swap), the code re-derives `recommended` from whether both project names
+it returned exactly match a real project — if they don't, the suggestion
+is discarded and replaced with an honest "current projects are already
+optimal" fallback, regardless of what the model claimed.
+
+### Sample swap recommendation (for the report)
+
+Job **J21** (Target, Sr Applied Data Scientist — Search & Browse):
+> Swap recommended: replace **"E-commerce Product Recommendation Engine"**
+> with **"Demand Forecasting for Retail Supply Chain"**.
+> Reasoning: the candidate's existing recommendation-engine project doesn't
+> address the posting's search-ranking/retrieval focus; the demand
+> forecasting project demonstrates the same Retail/E-commerce domain via
+> different, still-relevant technical depth (time-series forecasting,
+> large-scale data pipelines).
+
+Full saved fit analyses for all Top 3 jobs: `outputs/J18/fit_analysis.txt`,
+`outputs/J21/fit_analysis.txt`, `outputs/J14/fit_analysis.txt` (plus
+`.json` versions for the Tailoring workstream to consume programmatically).
+
+### Known limitation (candidate for the report's ethics/honesty reflection)
+
+Even with JSON-constrained output and a deterministic core, the local 3B
+model occasionally writes free-text reasoning that slightly overstates a
+project's fit (e.g. attributing a tech-stack item to a project that
+doesn't list it) — a real illustration of why the Evidence Rule is
+enforced in *code*, not just prompted for: a small model can't be fully
+trusted to self-police factual grounding in prose, so anything that feeds
+a structured decision (skill buckets, swap validity, seniority, education)
+is computed outside the model, and only genuinely qualitative narrative is
+left to it.

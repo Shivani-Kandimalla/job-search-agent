@@ -1,0 +1,20 @@
+FIT ANALYSIS: Sr Applied Data Scientist - Search and Browse (Applied ML, NLP, LLMs) @ Target Corporation  [J21]
+Deterministic score: 0.8571  (skill_match=0.7143, experience_alignment=1.0, domain_alignment=1.0)
+
+❌ Relevant Experience: 
+   Citation: (model did not provide a citation for this dimension)
+✅ Seniority: Meets the seniority bar: 4 years >= 3+ required.
+   Citation: Candidate has 4 years of experience (persona_preferences.json); posting lists '3+' (3+ years required).
+✅ Education: No education requirement was stated in the posting, so the candidate's degree(s) are not a blocker.
+   Citation: Posting does not state a specific degree requirement; candidate holds: Data Science, Statistics.
+✅ Core Skills: 71% of required skills are evidenced somewhere in the candidate's real profile (meets the 50% bar).
+   Citation: On resume: Embeddings, GenAI/RAG systems. Evidenced elsewhere in profile: retrieval and ranking models, NLP. Genuine gaps: transformers, vector search, query understanding.
+✅ Projects: 
+   Citation: E-commerce Product Recommendation Engine [ON RESUME] | Domain: Retail / E-commerce | Tech: Python, PyTorch, collaborative filtering, embeddings, Redis | Designed and trained a hybrid recommendation system combining collaborative filtering with learned product embeddings to personalize product listings for an online retail catalog.
+
+Missing skills -- evidenced elsewhere (tailoring may add): retrieval and ranking models, NLP
+Missing skills -- genuine gap (never add): transformers, vector search, query understanding
+
+→ Current projects are already optimal. Current on-resume projects are retained as already optimal (the model's suggested swap did not name two verifiable, existing projects, so it was discarded per the Evidence Rule).
+
+Overall: While the candidate has some relevant experience and skills, their background is not a perfect fit for the job posting. The E-commerce Product Recommendation Engine project is a strong example of their ability to design and train recommendation systems, but it does not directly address the search ranking and browse personalization aspects of the job. Swapping in the Medical Imaging Anomaly Detector project could help bridge this gap, but it requires careful consideration of how to apply its skills and expertise to the new context.

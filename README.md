@@ -96,6 +96,19 @@ Verify: `pdflatex --version`. Missing packages get installed on demand:
 sudo tlmgr install <package-name>
 ```
 
+## Tools built so far (run from the repo root, venv activated)
+
+```bash
+python agent/tools/filtering.py       # deterministic filter: 23 jobs -> 7 kept
+python agent/tools/scoring.py         # deterministic scoring of the 7 kept jobs -> Top 3
+python agent/tools/fit_analysis.py    # one LLM call per Top-3 job -> outputs/<job_id>/fit_analysis.{json,txt}
+```
+
+`agent/tools/profile.py` and `agent/tools/llm_client.py` are shared helpers
+(profile/resume/portfolio loading, and the Ollama chat client respectively)
+used by every tool above and meant to be reused by Tailoring and Cover
+Letters too — see `handoff/scoring_handoff.md` for what they expose.
+
 ## Pipeline workstreams / ownership
 
 See `PLAN.md` for the full relay plan (what each workstream builds, the

@@ -1,0 +1,168 @@
+{
+  "ranked": [
+    {
+      "job_id": "J18",
+      "title": "AI Engineer: Computer Vision, LLMs & ML",
+      "company": "Flexgen Construction Technology",
+      "score": 0.9,
+      "skill_match": 0.8,
+      "experience_alignment": 1.0,
+      "domain_alignment": 1.0,
+      "matched_skills": [
+        "Python",
+        "PyTorch",
+        "TensorFlow",
+        "RAG",
+        "embeddings",
+        "vector databases",
+        "computer vision (YOLO, Segment Anything)",
+        "LangChain"
+      ],
+      "missing_skills": [
+        "JAX",
+        "LlamaIndex"
+      ],
+      "min_years_required": 2,
+      "candidate_years": 4
+    },
+    {
+      "job_id": "J21",
+      "title": "Sr Applied Data Scientist - Search and Browse (Applied ML, NLP, LLMs)",
+      "company": "Target Corporation",
+      "score": 0.8571,
+      "skill_match": 0.7143,
+      "experience_alignment": 1.0,
+      "domain_alignment": 1.0,
+      "matched_skills": [
+        "Embeddings",
+        "retrieval and ranking models",
+        "NLP",
+        "vector search",
+        "GenAI/RAG systems"
+      ],
+      "missing_skills": [
+        "transformers",
+        "query understanding"
+      ],
+      "min_years_required": 3,
+      "candidate_years": 4
+    },
+    {
+      "job_id": "J14",
+      "title": "MLOps Engineer, Machine Learning Engineer (Remote)",
+      "company": "Experian Health",
+      "score": 0.7727,
+      "skill_match": 0.5455,
+      "experience_alignment": 1.0,
+      "domain_alignment": 1.0,
+      "matched_skills": [
+        "Python",
+        "AWS SageMaker",
+        "Lambda",
+        "Docker",
+        "Kubernetes (EKS)",
+        "TensorFlow Serving"
+      ],
+      "missing_skills": [
+        "Step Functions",
+        "MLflow",
+        "Kubeflow",
+        "Terraform",
+        "CloudFormation"
+      ],
+      "min_years_required": 3,
+      "candidate_years": 4
+    },
+    {
+      "job_id": "J01",
+      "title": "Machine Learning Engineer, Distributed Data Systems (Robotics)",
+      "company": "OpenAI",
+      "score": 0.6333,
+      "skill_match": 0.6667,
+      "experience_alignment": 1.0,
+      "domain_alignment": 0.0,
+      "matched_skills": [
+        "Python",
+        "data pipelines",
+        "machine learning infrastructure",
+        "Kubernetes-style orchestration"
+      ],
+      "missing_skills": [
+        "distributed systems",
+        "streaming infrastructure"
+      ],
+      "min_years_required": 3,
+      "candidate_years": 4
+    },
+    {
+      "job_id": "J22",
+      "title": "Senior Applied AI/ML Scientist - Retailer Growth",
+      "company": "Faire",
+      "score": 0.6208,
+      "skill_match": 0.375,
+      "experience_alignment": 1.0,
+      "domain_alignment": 0.6667,
+      "matched_skills": [
+        "Machine learning",
+        "NLP",
+        "recommender systems"
+      ],
+      "missing_skills": [
+        "LTV modeling",
+        "LLMs",
+        "causal ML",
+        "bidding optimization",
+        "reinforcement learning"
+      ],
+      "min_years_required": 3,
+      "candidate_years": 4
+    },
+    {
+      "job_id": "J05",
+      "title": "Machine Learning Engineer II, Special Projects",
+      "company": "Amazon",
+      "score": 0.6,
+      "skill_match": 0.3333,
+      "experience_alignment": 1.0,
+      "domain_alignment": 0.6667,
+      "matched_skills": [
+        "Python",
+        "ML systems"
+      ],
+      "missing_skills": [
+        "Java",
+        "software architecture and design patterns",
+        "data engineering",
+        "distributed systems reliability"
+      ],
+      "min_years_required": 3,
+      "candidate_years": 4
+    },
+    {
+      "job_id": "J13",
+      "title": "Data Scientist - Medicare/Medicaid Claims Data",
+      "company": "Flexgen Life Sciences",
+      "score": 0.5833,
+      "skill_match": 0.1667,
+      "experience_alignment": 1.0,
+      "domain_alignment": 1.0,
+      "matched_skills": [
+        "SQL"
+      ],
+      "missing_skills": [
+        "SAS",
+        "health economics",
+        "real-world evidence analysis",
+        "Medicare/Medicaid claims analytics",
+        "statistical modeling"
+      ],
+      "min_years_required": 3,
+      "candidate_years": 4
+    }
+  ],
+  "top3_job_ids": [
+    "J18",
+    "J21",
+    "J14"
+  ]
+}

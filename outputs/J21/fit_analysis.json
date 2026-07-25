@@ -1,0 +1,74 @@
+{
+  "relevant_experience": {
+    "status": "x",
+    "citation": "(model did not provide a citation for this dimension)",
+    "explanation": ""
+  },
+  "projects": {
+    "status": "check",
+    "citation": "E-commerce Product Recommendation Engine [ON RESUME] | Domain: Retail / E-commerce | Tech: Python, PyTorch, collaborative filtering, embeddings, Redis | Designed and trained a hybrid recommendation system combining collaborative filtering with learned product embeddings to personalize product listings for an online retail catalog.",
+    "explanation": ""
+  },
+  "project_swap": {
+    "recommended": false,
+    "weak_resume_project": null,
+    "better_portfolio_project": null,
+    "reasoning": "Current on-resume projects are retained as already optimal (the model's suggested swap did not name two verifiable, existing projects, so it was discarded per the Evidence Rule)."
+  },
+  "overall_summary": "While the candidate has some relevant experience and skills, their background is not a perfect fit for the job posting. The E-commerce Product Recommendation Engine project is a strong example of their ability to design and train recommendation systems, but it does not directly address the search ranking and browse personalization aspects of the job. Swapping in the Medical Imaging Anomaly Detector project could help bridge this gap, but it requires careful consideration of how to apply its skills and expertise to the new context.",
+  "seniority": {
+    "status": "check",
+    "citation": "Candidate has 4 years of experience (persona_preferences.json); posting lists '3+' (3+ years required).",
+    "explanation": "Meets the seniority bar: 4 years >= 3+ required."
+  },
+  "education": {
+    "status": "check",
+    "citation": "Posting does not state a specific degree requirement; candidate holds: Data Science, Statistics.",
+    "explanation": "No education requirement was stated in the posting, so the candidate's degree(s) are not a blocker."
+  },
+  "core_skills": {
+    "status": "check",
+    "citation": "On resume: Embeddings, GenAI/RAG systems. Evidenced elsewhere in profile: retrieval and ranking models, NLP. Genuine gaps: transformers, vector search, query understanding.",
+    "explanation": "71% of required skills are evidenced somewhere in the candidate's real profile (meets the 50% bar)."
+  },
+  "job_id": "J21",
+  "title": "Sr Applied Data Scientist - Search and Browse (Applied ML, NLP, LLMs)",
+  "company": "Target Corporation",
+  "skill_buckets": {
+    "on_resume": [
+      "Embeddings",
+      "GenAI/RAG systems"
+    ],
+    "evidenced_elsewhere": [
+      "retrieval and ranking models",
+      "NLP"
+    ],
+    "genuine_gap": [
+      "transformers",
+      "vector search",
+      "query understanding"
+    ]
+  },
+  "score_breakdown": {
+    "job_id": "J21",
+    "title": "Sr Applied Data Scientist - Search and Browse (Applied ML, NLP, LLMs)",
+    "company": "Target Corporation",
+    "score": 0.8571,
+    "skill_match": 0.7143,
+    "experience_alignment": 1.0,
+    "domain_alignment": 1.0,
+    "matched_skills": [
+      "Embeddings",
+      "retrieval and ranking models",
+      "NLP",
+      "vector search",
+      "GenAI/RAG systems"
+    ],
+    "missing_skills": [
+      "transformers",
+      "query understanding"
+    ],
+    "min_years_required": 3,
+    "candidate_years": 4
+  }
+}

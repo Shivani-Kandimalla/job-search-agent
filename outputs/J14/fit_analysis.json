@@ -1,0 +1,82 @@
+{
+  "relevant_experience": {
+    "status": "check",
+    "citation": "Built and deployed a patient readmission risk model (XGBoost, SHAP) used by a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.",
+    "explanation": "The candidate has experience in the healthcare domain, specifically with predictive risk modeling, which aligns with the job posting's requirements."
+  },
+  "projects": {
+    "status": "x",
+    "citation": "(model did not provide a citation for this dimension)",
+    "explanation": "Although the candidate has built and deployed a patient readmission risk model, it does not directly address the operationalization of ML models on AWS or the development of scalable MLOps pipelines for model training, validation, deployment, and monitoring."
+  },
+  "project_swap": {
+    "recommended": true,
+    "weak_resume_project": "Patient Readmission Risk Predictor",
+    "better_portfolio_project": "Medical Imaging Anomaly Detector",
+    "reasoning": "The candidate's current project on patient readmission risk prediction does not align with the job posting's requirements for operationalizing ML models on AWS. The Medical Imaging Anomaly Detector project, on the other hand, demonstrates experience in healthcare and machine learning, making it a suitable replacement."
+  },
+  "overall_summary": "While the candidate has relevant experience in the healthcare domain and has built and deployed predictive risk models, their current projects do not directly address the job posting's requirements for operationalizing ML models on AWS or developing scalable MLOps pipelines. The Medical Imaging Anomaly Detector project is a suitable replacement that demonstrates experience in machine learning and the healthcare domain.",
+  "seniority": {
+    "status": "check",
+    "citation": "Candidate has 4 years of experience (persona_preferences.json); posting lists '3+' (3+ years required).",
+    "explanation": "Meets the seniority bar: 4 years >= 3+ required."
+  },
+  "education": {
+    "status": "check",
+    "citation": "Posting accepts a degree '...or related field'; candidate holds: Data Science, Statistics.",
+    "explanation": "The posting's open-ended 'or related field' language is satisfied by the candidate's quantitative degree(s)."
+  },
+  "core_skills": {
+    "status": "check",
+    "citation": "On resume: Python, AWS SageMaker, Docker. Evidenced elsewhere in profile: Lambda, TensorFlow Serving. Genuine gaps: Step Functions, Kubernetes (EKS), MLflow, Kubeflow, Terraform, CloudFormation.",
+    "explanation": "55% of required skills are evidenced somewhere in the candidate's real profile (meets the 50% bar)."
+  },
+  "job_id": "J14",
+  "title": "MLOps Engineer, Machine Learning Engineer (Remote)",
+  "company": "Experian Health",
+  "skill_buckets": {
+    "on_resume": [
+      "Python",
+      "AWS SageMaker",
+      "Docker"
+    ],
+    "evidenced_elsewhere": [
+      "Lambda",
+      "TensorFlow Serving"
+    ],
+    "genuine_gap": [
+      "Step Functions",
+      "Kubernetes (EKS)",
+      "MLflow",
+      "Kubeflow",
+      "Terraform",
+      "CloudFormation"
+    ]
+  },
+  "score_breakdown": {
+    "job_id": "J14",
+    "title": "MLOps Engineer, Machine Learning Engineer (Remote)",
+    "company": "Experian Health",
+    "score": 0.7727,
+    "skill_match": 0.5455,
+    "experience_alignment": 1.0,
+    "domain_alignment": 1.0,
+    "matched_skills": [
+      "Python",
+      "AWS SageMaker",
+      "Lambda",
+      "Docker",
+      "Kubernetes (EKS)",
+      "TensorFlow Serving"
+    ],
+    "missing_skills": [
+      "Step Functions",
+      "MLflow",
+      "Kubeflow",
+      "Terraform",
+      "CloudFormation"
+    ],
+    "min_years_required": 3,
+    "candidate_years": 4
+  }
+}
