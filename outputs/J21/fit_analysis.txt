@@ -1,19 +1,19 @@
 FIT ANALYSIS: Sr Applied Data Scientist - Search and Browse (Applied ML, NLP, LLMs) @ Target Corporation  [J21]
 Deterministic score (from scoring.py, not this tool): 0.8571  (skill_match=0.7143, experience_alignment=1.0, domain_alignment=1.0)
 
-✅ Relevant Experience: The candidate has relevant experience in building and deploying predictive models for healthcare, which aligns with the job's requirements.
-   Citation: Built and deployed a patient readmission risk model using XGBoost and SHAP, achieving 0.81 AUC on held-out data.
-❌ Seniority: Although the candidate meets the minimum required experience, they have more than 3 years of experience, which may make them a strong contender for the role.
-   Citation: Candidate has 4 years of experience, but the posting requires at least 3+ years.
-✅ Education: The candidate holds a relevant degree in data science, which aligns with the job's requirements.
-   Citation: Holds an M.S. in Data Science from Fictional State University.
+✅ Relevant Experience: The candidate has relevant experience in building and deploying ML systems across healthcare and retail/e-commerce.
+   Citation: Data Scientist -- Jun 2022 -- Present; Meridian Health Analytics -- Austin, TX; Built and deployed a patient readmission risk model (XGBoost, SHAP) used by a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.
+✅ Seniority: The candidate meets the required seniority, as their experience exceeds the stated minimum of 3+ years.
+   Citation: Candidate years of experience: 4; Posting lists '3+' (parsed minimum: 3+ years).
+✅ Education: The candidate holds a Master's degree in Data Science and a Bachelor's degree in Statistics.
+   Citation: Fictional State University -- Austin, TX; M.S. in Data Science, GPA 3.8/4.0 -- May 2022; Northbridge University -- Denver, CO; B.S. in Statistics -- May 2020.
 
 Core Skills:
 ✅ Aligned: Embeddings, GenAI/RAG systems
-❌ Missing but evidenced in profile: retrieval and ranking models (Fraud Detection Pipeline for Payments [PORTFOLIO ONLY]), NLP (E-commerce Product Recommendation Engine [ON RESUME])
+❌ Missing but evidenced in profile: retrieval and ranking models, NLP
 ❌ Genuine gaps: transformers, vector search, query understanding
 
 Projects:
 ✅ Current projects are already optimal. Current on-resume projects are retained as already optimal (no verifiable, real project name was confirmed for a swap, even after being asked to correct it -- Evidence Rule).
 
-Overall: While the candidate meets some of the job's requirements, they lack experience with transformers, vector search, and query understanding. However, their portfolio projects demonstrate expertise in related areas, such as computer vision and deep learning. With some adjustments to their resume and portfolio, the candidate may be a strong contender for the role.
+Overall: The candidate has relevant experience in building and deploying ML systems across healthcare and retail/e-commerce. However, their seniority does not directly align with the required skills for this job posting. The 'Medical Imaging Anomaly Detector' project could be a good fit, as it demonstrates expertise in PyTorch and CNNs that could be applied to transformer-based models.

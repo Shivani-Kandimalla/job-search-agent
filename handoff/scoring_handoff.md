@@ -29,6 +29,15 @@
   preserves the model's own reasoning about *which* project fits better
   while still enforcing the assignment's Evidence Rule ("no evidence means
   no edit") on project *names* specifically.
+- Same fact-check pattern applied to **Seniority** after final testing found
+  it self-contradicting in 2 of 3 saved runs (e.g. citing "candidate has 4
+  years, posting requires 3+" and still marking it ❌ — its own rule 6 says
+  mark ❌ only when they "clearly fall short"). `analyze_fit()` now gives the
+  model one self-correction turn quoting its own contradictory text back to
+  it before falling back to a disclosed auto-correction. Same spirit as the
+  project-swap check: candidate_years ≥ min_years_required is a plain
+  arithmetic fact already in the model's reference data, so catching the
+  model disagreeing with its own arithmetic isn't a judgment override.
 - Missing-skill two-bucket split (`evidenced_elsewhere` vs. `genuine_gap`)
   is computed once in `fit_analysis.classify_required_skills(...)` and
   handed to the LLM as reference facts; the model reproduces this split
@@ -96,13 +105,19 @@ source — know which one to trust for what:
   Use `project_swap`, not the raw `projects` field, when deciding whether
   to actually perform a swap — `project_swap` is guaranteed to reference a
   real project (or be `recommended: false`), while `projects` is the raw
-  LLM output before that fact-check. In the current saved run, **J14** got
-  a validated swap (replace "Customer Support RAG Chatbot" with "Medical
-  Imaging Anomaly Detector"); J18 and J21 came back "already optimal."
-  Note: `fit_analysis.py` calls a live local LLM, so re-running it can
-  change which job(s) get a swap suggestion — if you re-run it, re-check
-  `outputs/*/fit_analysis.json` against whatever you cite in the report so
-  the two don't drift out of sync (this bit us once already).
+  LLM output before that fact-check. In the current saved run, **J18** got
+  a validated swap (replace "E-commerce Product Recommendation Engine"
+  with "Construction Site Safety Vision Monitor"); J14 and J21 came back
+  "already optimal."
+  **Important: `fit_analysis.py` calls a live local LLM, so re-running it
+  WILL change which job(s) get a swap suggestion** — this has already
+  happened twice during testing (J14 got it first, then J18). Don't
+  hard-code "J14 gets the swap" anywhere in Tailoring's own code or report
+  text — always read `project_swap` fresh out of whichever
+  `outputs/<job_id>/fit_analysis.json` is on disk at the time, and if you
+  re-run `fit_analysis.py` yourself, re-check every doc/report snippet
+  that quotes a specific job/project pairing so nothing drifts out of
+  sync.
 
 ## What to build next (Resume Tailoring)
 Take one Top-3 job's `outputs/<job_id>/fit_analysis.json` + `resume/resume.tex`

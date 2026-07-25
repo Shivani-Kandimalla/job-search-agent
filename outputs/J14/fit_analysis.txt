@@ -1,20 +1,19 @@
 FIT ANALYSIS: MLOps Engineer, Machine Learning Engineer (Remote) @ Experian Health  [J14]
 Deterministic score (from scoring.py, not this tool): 0.7727  (skill_match=0.5455, experience_alignment=1.0, domain_alignment=1.0)
 
-✅ Relevant Experience: The candidate has experience building and deploying machine learning models in the healthcare domain, which aligns with the job requirements.
-   Citation: Built and deployed a patient readmission risk model using EHR and claims data; designed feature pipelines over EHR and claims data to cut model retraining turnaround time from two weeks to three days.
-❌ Seniority: Although the candidate has 4 years of experience, the posting requires at least 3+ years of experience.
-   Citation: (model did not provide a citation for this dimension)
-✅ Education: The candidate holds a Master's degree in Data Science and a Bachelor's degree in Statistics, which aligns with the posting's qualifications.
-   Citation: M.S. in Data Science from Fictional State University; B.S. in Statistics from Northbridge University.
+❌ Relevant Experience: Although the candidate has experience with healthcare-related projects, their current role does not directly address the critical challenges in the healthcare revenue cycle mentioned in the job posting.
+   Citation: Data Scientist role at Meridian Health Analytics (Jun 2022 -- Present) - Built and deployed a patient readmission risk model using XGBoost, SHAP, SQL, and Python; achieved 0.81 AUC on held-out data.
+✅ Seniority: The candidate's experience meets or exceeds the required minimum for seniority in MLOps or ML engineering roles.
+   Citation: Candidate has 4 years of experience (Persona Preferences); posting lists '3+' (parsed minimum: 3+ years).
+❌ Education: The candidate's education does not align with the posting's requirements for a bachelor's degree in a relevant field.
+   Citation: Candidate holds a Master's degree in Data Science from Fictional State University (May 2022) and a Bachelor's degree in Statistics from Northbridge University (May 2020); posting requires a bachelor's degree in Computer Science, Engineering, Data Science, or related field.
 
 Core Skills:
-✅ Aligned: Python, AWS SageMaker, Docker
-❌ Missing but evidenced in profile: Lambda (PORTFOLIO ONLY: Fraud Detection Pipeline for Payments)
+✅ Aligned: Python, AWS SageMaker
+❌ Missing but evidenced in profile: Lambda, TensorFlow Serving
 ❌ Genuine gaps: Step Functions, Kubernetes (EKS), MLflow, Kubeflow, Terraform, CloudFormation
 
 Projects:
-✅ Swap Suggestion: Replace "Customer Support RAG Chatbot" with "Medical Imaging Anomaly Detector".
-   Reasoning: This portfolio-only project demonstrates experience with PyTorch, CNNs, and healthcare domain expertise, which could be valuable in addressing the job requirements.
+✅ Current projects are already optimal. Current on-resume projects are retained as already optimal (no verifiable, real project name was confirmed for a swap, even after being asked to correct it -- Evidence Rule).
 
-Overall: The candidate has relevant experience building machine learning models in the healthcare domain, but lacks direct experience with AWS services and MLOps pipelines. With some adjustments to their portfolio projects, they may be a good fit for this role.
+Overall: The candidate lacks relevant experience in MLOps or ML engineering roles, seniority, and education that aligns with the posting's requirements. However, they have demonstrated expertise in healthcare-related projects and AWS services through their portfolio-only project, which could be leveraged to address some of the job's requirements.

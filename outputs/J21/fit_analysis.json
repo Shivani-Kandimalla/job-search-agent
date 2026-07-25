@@ -1,18 +1,18 @@
 {
   "relevant_experience": {
     "status": "check",
-    "citation": "Built and deployed a patient readmission risk model using XGBoost and SHAP, achieving 0.81 AUC on held-out data.",
-    "explanation": "The candidate has relevant experience in building and deploying predictive models for healthcare, which aligns with the job's requirements."
+    "citation": "Data Scientist -- Jun 2022 -- Present; Meridian Health Analytics -- Austin, TX; Built and deployed a patient readmission risk model (XGBoost, SHAP) used by a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.",
+    "explanation": "The candidate has relevant experience in building and deploying ML systems across healthcare and retail/e-commerce."
   },
   "seniority": {
-    "status": "x",
-    "citation": "Candidate has 4 years of experience, but the posting requires at least 3+ years.",
-    "explanation": "Although the candidate meets the minimum required experience, they have more than 3 years of experience, which may make them a strong contender for the role."
+    "status": "check",
+    "citation": "Candidate years of experience: 4; Posting lists '3+' (parsed minimum: 3+ years).",
+    "explanation": "The candidate meets the required seniority, as their experience exceeds the stated minimum of 3+ years."
   },
   "education": {
     "status": "check",
-    "citation": "Holds an M.S. in Data Science from Fictional State University.",
-    "explanation": "The candidate holds a relevant degree in data science, which aligns with the job's requirements."
+    "citation": "Fictional State University -- Austin, TX; M.S. in Data Science, GPA 3.8/4.0 -- May 2022; Northbridge University -- Denver, CO; B.S. in Statistics -- May 2020.",
+    "explanation": "The candidate holds a Master's degree in Data Science and a Bachelor's degree in Statistics."
   },
   "core_skills": {
     "aligned": [
@@ -20,14 +20,8 @@
       "GenAI/RAG systems"
     ],
     "missing_evidenced": [
-      {
-        "skill": "retrieval and ranking models",
-        "evidence": "Fraud Detection Pipeline for Payments [PORTFOLIO ONLY]"
-      },
-      {
-        "skill": "NLP",
-        "evidence": "E-commerce Product Recommendation Engine [ON RESUME]"
-      }
+      "retrieval and ranking models",
+      "NLP"
     ],
     "genuine_gap": [
       "transformers",
@@ -37,11 +31,11 @@
   },
   "projects": {
     "current_weak_project": null,
-    "weak_project_note": null,
+    "weak_project_note": "The 'E-commerce Product Recommendation Engine' project, although relevant to retail/e-commerce, does not directly address the required skills for this job posting.",
     "swap_suggestion": null,
     "already_optimal": true
   },
-  "overall_summary": "While the candidate meets some of the job's requirements, they lack experience with transformers, vector search, and query understanding. However, their portfolio projects demonstrate expertise in related areas, such as computer vision and deep learning. With some adjustments to their resume and portfolio, the candidate may be a strong contender for the role.",
+  "overall_summary": "The candidate has relevant experience in building and deploying ML systems across healthcare and retail/e-commerce. However, their seniority does not directly align with the required skills for this job posting. The 'Medical Imaging Anomaly Detector' project could be a good fit, as it demonstrates expertise in PyTorch and CNNs that could be applied to transformer-based models.",
   "project_swap": {
     "recommended": false,
     "weak_resume_project": null,

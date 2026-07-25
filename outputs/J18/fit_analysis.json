@@ -1,18 +1,18 @@
 {
   "relevant_experience": {
     "status": "x",
-    "citation": "Data Scientist role at Meridian Health Analytics with a focus on predictive risk modeling and feature engineering.",
-    "explanation": "Although the candidate has experience building ML systems, their work is not directly related to construction technology or computer vision."
+    "citation": "No direct relation to construction job sites or AI engineering; focused on healthcare and retail/e-commerce.",
+    "explanation": "Although the candidate has experience with ML systems, their work is not directly related to construction technology or AI engineering."
   },
   "seniority": {
     "status": "check",
-    "citation": "4 years of experience as a Data Scientist",
-    "explanation": "The candidate meets the minimum requirement of 2+ years of experience for this role."
+    "citation": "(model did not provide a citation for this dimension)",
+    "explanation": "(model did not provide an explanation for this dimension)"
   },
   "education": {
-    "status": "x",
-    "citation": "M.S. in Data Science from Northbridge University",
-    "explanation": "The posting does not specify a degree requirement, but the candidate's education is in Statistics, which may not be directly relevant to construction technology."
+    "status": "check",
+    "citation": "M.S. in Data Science, GPA 3.8/4.0 from Northbridge University",
+    "explanation": "The candidate holds a Master's degree in Data Science, which aligns with the required qualifications."
   },
   "core_skills": {
     "aligned": [
@@ -22,10 +22,8 @@
       "RAG"
     ],
     "missing_evidenced": [
-      {
-        "skill": "vector databases",
-        "evidence": "Construction Site Safety Vision Monitor [PORTFOLIO ONLY]"
-      }
+      "vector databases",
+      "computer vision (YOLO, Segment Anything)"
     ],
     "genuine_gap": [
       "JAX",
@@ -33,17 +31,20 @@
     ]
   },
   "projects": {
-    "current_weak_project": null,
-    "weak_project_note": "Although the candidate has experience with retrieval-augmented generation, their current project may not be directly applicable to construction technology.",
-    "swap_suggestion": null,
-    "already_optimal": true
+    "current_weak_project": "E-commerce Product Recommendation Engine",
+    "weak_project_note": "Although it's a strong project, its domain is not directly related to construction technology.",
+    "swap_suggestion": {
+      "project": "Construction Site Safety Vision Monitor",
+      "reasoning": "This project aligns more closely with the required skills and domain of construction technology."
+    },
+    "already_optimal": false
   },
-  "overall_summary": "The candidate has relevant experience in ML systems, but their work is not directly related to construction technology. They lack specific skills like JAX and LlamaIndex, and their current project may not be directly applicable to the required domain. However, they have a strong foundation in Python, PyTorch, TensorFlow, and RAG, which are essential for this role.",
+  "overall_summary": "Although the candidate has some relevant experience, their background is not directly aligned with the job requirements. However, they have a strong foundation in data science and machine learning, which could be valuable for the role.",
   "project_swap": {
-    "recommended": false,
-    "weak_resume_project": null,
-    "better_portfolio_project": null,
-    "reasoning": "Current on-resume projects are retained as already optimal (no verifiable, real project name was confirmed for a swap, even after being asked to correct it -- Evidence Rule)."
+    "recommended": true,
+    "weak_resume_project": "E-commerce Product Recommendation Engine",
+    "better_portfolio_project": "Construction Site Safety Vision Monitor",
+    "reasoning": "This project aligns more closely with the required skills and domain of construction technology."
   },
   "job_id": "J18",
   "title": "AI Engineer: Computer Vision, LLMs & ML",

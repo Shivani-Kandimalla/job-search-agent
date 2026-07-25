@@ -163,36 +163,59 @@ better fit whenever it names real ones.
 
 ### Sample swap recommendation (for the report)
 
-Job **J14** (Experian Health, MLOps Engineer):
-> ✅ Swap Suggestion: replace **"Customer Support RAG Chatbot"** with
-> **"Medical Imaging Anomaly Detector"**.
-> Reasoning: this portfolio-only project demonstrates experience with
-> PyTorch, CNNs, and healthcare-domain expertise, more directly relevant
-> to the posting than the RAG chatbot project.
+Job **J18** (Flexgen Construction Technology, AI Engineer):
+> ✅ Swap Suggestion: replace **"E-commerce Product Recommendation
+> Engine"** with **"Construction Site Safety Vision Monitor"**.
+> Reasoning: this portfolio-only project aligns more closely with the
+> required skills and domain of construction technology than the
+> e-commerce recommendation-engine project.
 
-Jobs **J18** and **J21** came back "current projects are already optimal"
-this run — a legitimate outcome the model is explicitly allowed to reach,
-though it's worth noting the local model is stochastic here: re-running
-`fit_analysis.py` can change which job(s) get a swap suggestion from one
-run to the next.
+Jobs **J14** and **J21** came back "current projects are already optimal"
+in this saved run — a legitimate outcome the model is explicitly allowed
+to reach, though it's worth noting the local model is stochastic here:
+re-running `fit_analysis.py` can change which job(s) get a swap suggestion
+from one run to the next (it has previously surfaced J14 instead of J18
+for this same reason — always check the live `outputs/*/fit_analysis.json`
+rather than trusting this snippet if you re-run the tool).
 
 Full saved fit analyses for all Top 3 jobs: `outputs/J18/fit_analysis.txt`,
 `outputs/J21/fit_analysis.txt`, `outputs/J14/fit_analysis.txt` (plus
 `.json` versions for the Tailoring workstream to consume programmatically).
 
-### Known limitation (candidate for the report's ethics/honesty reflection)
+### Known limitation, and a self-correction fix added after final testing
 
 Because every dimension's verdict now genuinely comes from the local 3B
 model's own reasoning (as the assignment requires), quality is visibly
-less consistent than a fully hard-coded version would be — e.g. the model
-sometimes marks "Seniority" ❌ for a candidate who has *more* years than
-required, reasoning that their years aren't in the *specific* sub-domain
-the posting wants, which is a defensible-but-debatable judgment call, not
-a factual error, since the underlying years-comparison fact it was given
-was correct. This is the real, disclosed trade-off of following the
-assignment's "LLM drives" rule with a small local model instead of a
-larger paid one: the reasoning trace is authentically the model's own,
-but its qualitative judgment is not always what a human reviewer would
-choose. A larger model (e.g. GPT-4-class) would likely be materially more
-consistent here without any code changes, since the prompt and grounding
-data would be unchanged — only the reasoning quality would improve.
+less consistent than a fully hard-coded version would be. Final testing
+surfaced a concrete case of this: in 2 of the 3 saved runs, the model
+marked "Seniority" ❌ for a candidate whose own cited years *met or
+exceeded* the posting's stated minimum — e.g. its own text said "candidate
+has 4 years, posting requires 3+" and still marked it a fail. That's an
+internal self-contradiction, not a defensible close call, since the
+system prompt's own rule 6 says "mark x only when they clearly fall
+short" and rule 5 explicitly reserves sub-domain-relevance judgment for
+"relevant_experience," not "seniority."
+
+`analyze_fit()` now catches this the same way it already catches invalid
+project-swap names: a real, visible **self-correction turn** — a second
+LLM call quoting the model's own contradictory citation/explanation back
+to it, alongside the reference-data years comparison, asking it to
+reconcile the two per its own stated rules — before ever falling back to
+a disclosed auto-correction. This is a fact-check (is candidate_years ≥
+min_years_required, a plain arithmetic comparison already handed to the
+model as reference data), not a judgment override: Python never decides
+*why* a candidate is or isn't senior enough, it only catches the model
+disagreeing with its own arithmetic. Re-verified stable across two
+consecutive fresh runs after the fix — zero contradictions in all three
+Top-3 jobs both times.
+
+This remains the real, disclosed trade-off of following the assignment's
+"LLM drives" rule with a small local model instead of a larger paid one:
+the reasoning trace is authentically the model's own, and self-correction
+catches outright contradictions, but subtler qualitative judgment calls
+(e.g. one run's Education verdict left its citation field blank even
+after a retry, falling back to the "(model did not provide a citation)"
+placeholder) can still slip through. A larger model (e.g. GPT-4-class)
+would likely be materially more consistent here without any code changes,
+since the prompt and grounding data would be unchanged — only the
+reasoning quality would improve.

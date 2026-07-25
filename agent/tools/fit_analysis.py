@@ -288,6 +288,19 @@ true with current_weak_project/swap_suggestion as null if no real project \
 pairing makes sense. Output ONLY the corrected JSON object."""
 
 
+SENIORITY_CORRECTION_PROMPT_TEMPLATE = """Look again at your "seniority" field. Your own citation said: \
+{citation!r} and your explanation said: {explanation!r} -- but the \
+reference data you were given was: candidate has {candidate_years} years \
+of experience, the posting's stated minimum is {min_years_required}+ \
+years. Per your own rule 6 ("mark x only when they clearly fall short"), \
+a candidate whose years meet or exceed the stated minimum should be \
+marked "check" for seniority -- remember sub-domain relevance is \
+relevant_experience's job, not seniority's (rule 5). Re-send the FULL \
+JSON object again, unchanged except: fix the "seniority" field's status \
+(and citation/explanation if needed) to be consistent with this fact. \
+Output ONLY the corrected JSON object."""
+
+
 def _extract_json(raw: str) -> dict:
     raw = raw.strip()
     raw = re.sub(r"^```(?:json)?\s*", "", raw)
@@ -388,6 +401,50 @@ def analyze_fit(job: dict, profile: dict, score_breakdown: dict = None, retries:
         )
 
     parsed = _fill_blank_fallbacks(parsed)
+
+    candidate_years = profile["candidate_years"]
+    min_years_required = score_breakdown["min_years_required"]
+    seniority = parsed.get("seniority") or {}
+    if seniority.get("status") == "x" and candidate_years >= min_years_required:
+        # The model's own reference data says the candidate meets or exceeds
+        # the numeric bar -- per its own rule 6 that's an internal
+        # contradiction, not a legitimate close call. One self-correction
+        # turn (a real second LLM call, visible in the trace) before any
+        # fallback, same pattern as the project-swap fact-check below.
+        messages.append({"role": "assistant", "content": raw})
+        messages.append({
+            "role": "user",
+            "content": SENIORITY_CORRECTION_PROMPT_TEMPLATE.format(
+                citation=seniority.get("citation", ""),
+                explanation=seniority.get("explanation", ""),
+                candidate_years=candidate_years,
+                min_years_required=min_years_required,
+            ),
+        })
+        try:
+            corrected_raw = chat(messages=messages, temperature=0.2, response_format={"type": "json_object"})
+            corrected = _extract_json(corrected_raw)
+            corrected = _fill_blank_fallbacks(corrected)
+            parsed["seniority"] = corrected.get("seniority") or parsed.get("seniority")
+        except (ValueError, json.JSONDecodeError):
+            pass  # fall through to the fact-check fallback below
+
+        # Final safety net: candidate_years vs. min_years_required is a
+        # factual arithmetic comparison, not a judgment call, so if the
+        # model still contradicts it after being given the chance to
+        # reconsider, disclose the correction transparently rather than
+        # leaving a self-contradictory report on file.
+        seniority = parsed.get("seniority") or {}
+        if seniority.get("status") == "x" and candidate_years >= min_years_required:
+            seniority["status"] = "check"
+            seniority["explanation"] = (
+                seniority.get("explanation", "").strip()
+                + f" [Auto-corrected: model marked this a fail even though "
+                  f"the candidate's {candidate_years} years meet or exceed "
+                  f"the posting's stated {min_years_required}+ year minimum; "
+                  f"flagged here for disclosure.]"
+            )
+            parsed["seniority"] = seniority
 
     on_resume_names = [p["name"] for p in profile["portfolio_projects"] if p["on_resume"]]
     portfolio_only_names = [p["name"] for p in profile["portfolio_projects"] if not p["on_resume"]]

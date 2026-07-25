@@ -1,19 +1,20 @@
 FIT ANALYSIS: AI Engineer: Computer Vision, LLMs & ML @ Flexgen Construction Technology  [J18]
 Deterministic score (from scoring.py, not this tool): 0.9  (skill_match=0.8, experience_alignment=1.0, domain_alignment=1.0)
 
-❌ Relevant Experience: Although the candidate has experience building ML systems, their work is not directly related to construction technology or computer vision.
-   Citation: Data Scientist role at Meridian Health Analytics with a focus on predictive risk modeling and feature engineering.
-✅ Seniority: The candidate meets the minimum requirement of 2+ years of experience for this role.
-   Citation: 4 years of experience as a Data Scientist
-❌ Education: The posting does not specify a degree requirement, but the candidate's education is in Statistics, which may not be directly relevant to construction technology.
-   Citation: M.S. in Data Science from Northbridge University
+❌ Relevant Experience: Although the candidate has experience with ML systems, their work is not directly related to construction technology or AI engineering.
+   Citation: No direct relation to construction job sites or AI engineering; focused on healthcare and retail/e-commerce.
+✅ Seniority: (model did not provide an explanation for this dimension)
+   Citation: (model did not provide a citation for this dimension)
+✅ Education: The candidate holds a Master's degree in Data Science, which aligns with the required qualifications.
+   Citation: M.S. in Data Science, GPA 3.8/4.0 from Northbridge University
 
 Core Skills:
 ✅ Aligned: Python, PyTorch, TensorFlow, RAG
-❌ Missing but evidenced in profile: vector databases (Construction Site Safety Vision Monitor [PORTFOLIO ONLY])
+❌ Missing but evidenced in profile: vector databases, computer vision (YOLO, Segment Anything)
 ❌ Genuine gaps: JAX, LlamaIndex
 
 Projects:
-✅ Current projects are already optimal. Current on-resume projects are retained as already optimal (no verifiable, real project name was confirmed for a swap, even after being asked to correct it -- Evidence Rule).
+✅ Swap Suggestion: Replace "E-commerce Product Recommendation Engine" with "Construction Site Safety Vision Monitor".
+   Reasoning: This project aligns more closely with the required skills and domain of construction technology.
 
-Overall: The candidate has relevant experience in ML systems, but their work is not directly related to construction technology. They lack specific skills like JAX and LlamaIndex, and their current project may not be directly applicable to the required domain. However, they have a strong foundation in Python, PyTorch, TensorFlow, and RAG, which are essential for this role.
+Overall: Although the candidate has some relevant experience, their background is not directly aligned with the job requirements. However, they have a strong foundation in data science and machine learning, which could be valuable for the role.
