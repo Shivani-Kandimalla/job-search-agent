@@ -8,22 +8,33 @@
   Learning, RAG ↔ Retrieval-Augmented Generation, etc.) plus a token-overlap
   fallback for multi-word skills — see `SKILL_SYNONYMS` in
   `agent/tools/scoring.py`.
-- Fit Analysis divides work between deterministic Python (Seniority,
-  Education, Core Skills — anything with an objectively-checkable answer)
-  and one LLM call per job (Relevant Experience, Projects, project-swap
-  recommendation, overall summary — anything that needs real judgment).
-  This split exists because the local `llama3.2` model was unreliable at
-  simple arithmetic/keyword-matching tasks (e.g. it would mark a candidate
-  with more years than required as failing "Seniority") but fine at
-  qualitative narrative once given the deterministic facts as ground truth.
-- Project-swap suggestions are validated in code, not trusted from the
-  model: a swap is only "recommended" if both project names it returns
-  exactly match a real project in `data/portfolio.txt`. Otherwise the
-  suggestion is discarded and replaced with an honest "current projects
-  already optimal" fallback. This is the Evidence Rule enforced in code.
+- **Important correction made mid-workstream:** an earlier version of
+  `fit_analysis.py` computed Seniority/Education/Core Skills verdicts in
+  pure Python (no LLM call at all) because the local model was unreliable
+  at that arithmetic. That directly conflicts with the assignment's own
+  rules — Section 3.2 explicitly calls Scoring "deterministic; NOT an LLM
+  call," but Section 3.3 never says that about Fit Analysis (it's framed
+  purely as an LLM narrative task), and the assignment's global rule is
+  "The LLM drives — hard-coded scripts that execute fixed steps without
+  LLM decision-making will lose points." **The current version has all 5
+  dimensions decided and written by the LLM itself**, in one call. Python
+  only supplies accurate reference facts (skill-evidence buckets, years
+  comparison, degree comparison) as grounding context in the prompt — it
+  never overwrites what the model decided. Keep it this way; don't
+  reintroduce a Python override for these fields.
+- Project-swap suggestions get a **fact-check, not a judgment override**:
+  if the model names a project that doesn't exist in `data/portfolio.txt`,
+  it gets one self-correction turn (a second, visible LLM call listing the
+  real project names) before the tool ever falls back to "no swap." This
+  preserves the model's own reasoning about *which* project fits better
+  while still enforcing the assignment's Evidence Rule ("no evidence means
+  no edit") on project *names* specifically.
 - Missing-skill two-bucket split (`evidenced_elsewhere` vs. `genuine_gap`)
   is computed once in `fit_analysis.classify_required_skills(...)` and
-  handed to the LLM as fixed ground truth it cannot contradict.
+  handed to the LLM as reference facts; the model reproduces this split
+  into its own `core_skills.missing_evidenced` / `core_skills.genuine_gap`
+  output fields (matching the assignment's example format) rather than
+  Python writing those fields directly.
 
 ## Files delivered
 - `agent/tools/profile.py` — shared loader used by every downstream tool
@@ -63,24 +74,35 @@
 
 ## Fit analyses — this is your to-do list
 Each `outputs/<job_id>/fit_analysis.json` contains everything Tailoring
-needs, notably:
-- `skill_buckets.evidenced_elsewhere` — skills you're allowed to surface on
-  the resume (they're real, just not on the resume text yet).
-- `skill_buckets.genuine_gap` — skills you must never add.
-- `project_swap` — `{recommended, weak_resume_project, better_portfolio_project, reasoning}`.
-  J21 got a validated swap recommendation (replace "E-commerce Product
-  Recommendation Engine" with "Demand Forecasting for Retail Supply
-  Chain"); J14 also got one (replace "Patient Readmission Risk Predictor"
-  with "Medical Imaging Anomaly Detector"); J18 came back "already
-  optimal" — that's a legitimate outcome, not a bug (its resume skills
-  already cover 80% of the posting). Note: `fit_analysis.py` calls a local
-  LLM at temperature 0.2, so re-running it can change these specific
-  recommendations slightly — if you re-run it, re-check
+needs. Two different things live in there, and they're not the same
+source — know which one to trust for what:
+- `skill_buckets` (top-level, Python-computed, deterministic) —
+  `{on_resume, evidenced_elsewhere, genuine_gap}`. **Use this one** when
+  deciding what's safe to add to the resume — it's a guaranteed-accurate
+  string match against the real profile files, not the LLM's
+  recollection of it.
+- `core_skills` (nested inside the LLM's own output) —
+  `{aligned, missing_evidenced: [{skill, evidence}], genuine_gap}`. This
+  is the model's own reproduction of the same split, worded for the
+  human-readable report. Fine to quote in the report/change-log text, but
+  don't treat it as more authoritative than `skill_buckets` for deciding
+  actual resume edits.
+- `relevant_experience`, `seniority`, `education` — `{status, citation, explanation}`,
+  all written by the LLM itself (see "Decisions made" above for why —
+  don't reintroduce a Python override here).
+- `projects` — `{current_weak_project, weak_project_note, swap_suggestion: {project, reasoning} or null, already_optimal}`.
+- `project_swap` — the fact-checked version of the same swap decision:
+  `{recommended, weak_resume_project, better_portfolio_project, reasoning}`.
+  Use `project_swap`, not the raw `projects` field, when deciding whether
+  to actually perform a swap — `project_swap` is guaranteed to reference a
+  real project (or be `recommended: false`), while `projects` is the raw
+  LLM output before that fact-check. In the current saved run, **J14** got
+  a validated swap (replace "Customer Support RAG Chatbot" with "Medical
+  Imaging Anomaly Detector"); J18 and J21 came back "already optimal."
+  Note: `fit_analysis.py` calls a live local LLM, so re-running it can
+  change which job(s) get a swap suggestion — if you re-run it, re-check
   `outputs/*/fit_analysis.json` against whatever you cite in the report so
   the two don't drift out of sync (this bit us once already).
-- `relevant_experience`, `education`, `seniority`, `core_skills`,
-  `projects` — the 5 required dimensions, each with `status` (`check`/`x`)
-  and a `citation` you can quote directly in tailored bullet points.
 
 ## What to build next (Resume Tailoring)
 Take one Top-3 job's `outputs/<job_id>/fit_analysis.json` + `resume/resume.tex`

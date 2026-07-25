@@ -1,23 +1,39 @@
 """
-Fit Analysis Tool (Section 3.2 of the assignment, second half).
+Fit Analysis Tool (Section 3.3 of the assignment).
 
-One LLM call per Top-3 job. Unlike scoring.py, this DOES call the model --
-but the risky, fact-sensitive part (which required skills are actually
-evidenced somewhere in the candidate's real materials) is computed
-deterministically in Python first and handed to the model as ground truth.
-The model's job is narrower and more qualitative: write the Relevant
-Experience / Seniority / Education / Projects narrative, and recommend a
-project swap (or say the current ones are already optimal). This division
-of labor is what keeps a small local model (llama3.2) from hallucinating
-skills that don't exist in the profile.
+Unlike scoring.py (Section 3.2 explicitly says "deterministic; NOT an LLM
+call -- a model must never generate the number"), Fit Analysis is NOT
+called out as deterministic anywhere in the assignment. It's framed purely
+as an LLM narrative task: "It answers: 'Tell me why this job is a good fit
+for me.' Text output is enough." So the assignment's "The LLM drives --
+hard-coded scripts that execute fixed steps without LLM decision-making
+will lose points" rule applies here in full: all 5 dimensions' verdicts
+and text must come from the model's own response, not from Python
+pre-deciding them.
 
-Enforces (per PLAN.md):
-  - All 5 dimensions in the output: Relevant Experience, Seniority,
-    Education, Core Skills, Projects -- each with a real citation.
-  - The two-bucket missing-skills split: evidenced-elsewhere (usable by
-    the Tailoring workstream) vs. genuine gap (never to be added).
-  - An explicit project-swap recommendation, or an explicit statement that
-    current projects are already optimal.
+What Python DOES do here (and this is legitimate "tool integration," not
+hard-coding a decision): compute accurate REFERENCE FACTS -- which
+required skills are evidenced where, the years-of-experience comparison,
+the degree-field comparison -- and hand them to the model as grounding
+context in the prompt. The model still has to read those facts and write
+its own check/x verdict and reasoning; Python never overwrites what the
+model decided. The one place Python *does* reject part of the model's
+output is the project-swap's project *names*, and even then only to
+enforce the assignment's own Evidence Rule ("swapped-in projects must
+exist in the portfolio file; inventing projects... is prohibited") --
+it's a factual existence check, not a judgment call, and if the name is
+unverifiable the tool first asks the model to self-correct before ever
+falling back to "no swap."
+
+Produces (per Section 3.3's example format):
+  - Relevant Experience, Seniority, Education, Projects: single check/x
+    dimension each, with citation + explanation, ALL written by the model.
+  - Core Skills: aligned / missing-but-evidenced / genuine-gap lists (the
+    assignment's own example format), again the model's own text -- though
+    grounded by the deterministic skill_buckets given to it, so it isn't
+    guessing which skills are real.
+  - Projects: which on-resume project is weak (if any) + swap suggestion,
+    or an explicit "already optimal" statement.
 """
 
 import json
@@ -29,16 +45,21 @@ from scoring import _skill_present, score_job
 
 
 def classify_required_skills(job: dict, profile: dict) -> dict:
-    """Splits a job's required_skills into 3 deterministic buckets, by
-    checking two separate text blobs (resume-only vs. rest-of-profile):
+    """Computes which of a job's required_skills are evidenced where in
+    the candidate's real materials. This is a factual lookup (does the
+    string appear in the resume vs. elsewhere in the profile?), not a
+    judgment call -- similar in spirit to the job posting text itself: raw
+    data the model reasons over, not a decision made on the model's
+    behalf. Handed to the model as REFERENCE FACTS so it can write an
+    accurate Core Skills section without having to re-derive this from
+    scratch (and risk missing something or hallucinating a match).
 
       on_resume          -> already literally on the resume
       evidenced_elsewhere -> not on the resume, but real (portfolio-only
                               project, master skills list, or a
-                              memory-learned fact) -- Tailoring MAY surface
-                              these on the resume, since they're truthful
+                              memory-learned fact)
       genuine_gap        -> not evidenced anywhere in the candidate's
-                             actual materials -- must NEVER be added
+                             actual materials
     """
     resume_lower = profile["resume_text"].lower()
     rest_lower = " ".join([
@@ -65,56 +86,39 @@ def classify_required_skills(job: dict, profile: dict) -> dict:
     }
 
 
-def compute_seniority_dimension(job: dict, profile: dict, score_breakdown: dict) -> dict:
-    """Seniority is just years-of-experience arithmetic -- there's no
-    judgment call here, so compute it in Python instead of trusting a
-    small local model to not flip check/x on a simple >=/< comparison."""
-    candidate_years = profile["candidate_years"]
-    min_years = score_breakdown["min_years_required"]
-    meets = candidate_years >= min_years
-    return {
-        "status": "check" if meets else "x",
-        "citation": f"Candidate has {candidate_years} years of experience "
-                    f"(persona_preferences.json); posting lists "
-                    f"'{job['years_experience']}' ({min_years}+ years required).",
-        "explanation": (
-            f"Meets the seniority bar: {candidate_years} years >= {min_years}+ required."
-            if meets else
-            f"Falls short of the seniority bar: {candidate_years} years < {min_years}+ required."
-        ),
-    }
-
-
-def compute_core_skills_dimension(skill_buckets: dict, score_breakdown: dict) -> dict:
-    """Deterministic pass/fail on skill_match, using the exact same
-    matched/missing computation as scoring.py so this dimension can never
-    contradict the score the job was ranked by."""
-    meets = score_breakdown["skill_match"] >= 0.5
-    on_resume = skill_buckets["on_resume"]
-    elsewhere = skill_buckets["evidenced_elsewhere"]
-    gap = skill_buckets["genuine_gap"]
-    citation = (
-        f"On resume: {', '.join(on_resume) or '(none)'}. "
-        f"Evidenced elsewhere in profile: {', '.join(elsewhere) or '(none)'}. "
-        f"Genuine gaps: {', '.join(gap) or '(none)'}."
+def _seniority_facts(job: dict, profile: dict, score_breakdown: dict) -> str:
+    """Plain factual sentence, no verdict -- the model still has to decide
+    check/x itself."""
+    return (
+        f"Candidate has {profile['candidate_years']} years of experience "
+        f"(persona_preferences.json); posting lists "
+        f"'{job['years_experience']}' (parsed minimum: "
+        f"{score_breakdown['min_years_required']}+ years)."
     )
-    return {
-        "status": "check" if meets else "x",
-        "citation": citation,
-        "explanation": (
-            f"{score_breakdown['skill_match'] * 100:.0f}% of required skills are "
-            f"evidenced somewhere in the candidate's real profile "
-            f"({'meets' if meets else 'below'} the 50% bar)."
-        ),
-    }
+
+
+def _education_facts(job: dict, profile: dict) -> str:
+    degree_fields = profile["degree_fields"]
+    degree_summary = ", ".join(degree_fields) if degree_fields else "no degree listed on resume"
+    text = (job.get("description", "") + " " + job.get("title", "")).lower()
+    mentions_requirement = any(
+        kw in text for kw in ("degree", "bachelor", "master", "b.s.", "m.s.", "phd", "ph.d")
+    )
+    if not mentions_requirement:
+        return f"Candidate holds: {degree_summary}. Posting does not state a specific degree requirement."
+    requirement_match = re.search(r"[^.]*degree[^.]*\.", text)
+    requirement_text = requirement_match.group().strip() if requirement_match else "a degree requirement is mentioned but not quotable"
+    return f"Candidate holds: {degree_summary}. Posting's stated requirement: \"{requirement_text}\""
 
 
 def _validate_project_swap(swap: dict, on_resume_names: list, portfolio_only_names: list) -> dict:
-    """Evidence Rule enforcement: a swap is only ever accepted if BOTH
-    project names exactly match a real project in the portfolio file. This
-    also repairs the model's occasional recommended=false/true vs.
-    populated-fields inconsistency -- the presence of two verifiable names
-    is what determines "recommended", not the model's own boolean."""
+    """Evidence Rule check: a swap is only accepted if BOTH project names
+    exactly match a real project in the portfolio file. This is a factual
+    existence check (does this project exist?), not a re-judgment of
+    whether the swap is a good idea -- the model's own reasoning for
+    *which* project to suggest is left untouched whenever it names real
+    projects. Only used as a last-resort fallback after analyze_fit()
+    has already given the model one chance to self-correct."""
     swap = swap or {}
     weak = (swap.get("weak_resume_project") or "").strip().lower()
     better = (swap.get("better_portfolio_project") or "").strip().lower()
@@ -131,8 +135,6 @@ def _validate_project_swap(swap: dict, on_resume_names: list, portfolio_only_nam
         }
 
     if not weak and not better:
-        # Model made a clean, deliberate "already optimal" call without
-        # naming any project -- its reasoning is safe to keep verbatim.
         return {
             "recommended": False,
             "weak_resume_project": None,
@@ -140,65 +142,18 @@ def _validate_project_swap(swap: dict, on_resume_names: list, portfolio_only_nam
             "reasoning": swap.get("reasoning") or "Current on-resume projects are retained as already optimal.",
         }
 
-    # The model named at least one project but the pairing didn't fully
-    # verify against the real portfolio -- drop its reasoning rather than
-    # keep text that may still argue for a swap while recommended=False,
-    # which would read as self-contradictory (and risks citing a project
-    # detail that doesn't actually exist, violating the Evidence Rule).
+    # Named at least one project, but it doesn't exist in the real
+    # portfolio -- per the assignment's own Evidence Rule ("no evidence
+    # means no edit"), decline the swap rather than act on an
+    # unverifiable claim. (analyze_fit() tries a self-correction turn
+    # with the model before this fallback is ever reached.)
     return {
         "recommended": False,
         "weak_resume_project": None,
         "better_portfolio_project": None,
         "reasoning": "Current on-resume projects are retained as already optimal "
-                     "(the model's suggested swap did not name two verifiable, "
-                     "existing projects, so it was discarded per the Evidence Rule).",
-    }
-
-
-def compute_education_dimension(job: dict, profile: dict) -> dict:
-    """Whether the candidate's degree(s) satisfy the posting's education
-    ask, if it states one. Keyword-matched against the job description
-    rather than left to the LLM, since a small local model kept
-    incorrectly flagging 'M.S. in Data Science' as not satisfying a
-    posting that literally asks for '...Data Science, or related field'."""
-    degree_fields = profile["degree_fields"]
-    degree_summary = ", ".join(degree_fields) if degree_fields else "no degree listed on resume"
-    text = (job.get("description", "") + " " + job.get("title", "")).lower()
-
-    mentions_requirement = any(kw in text for kw in ("degree", "bachelor", "master", "b.s.", "m.s.", "phd", "ph.d"))
-    if not mentions_requirement:
-        return {
-            "status": "check",
-            "citation": f"Posting does not state a specific degree requirement; candidate holds: {degree_summary}.",
-            "explanation": "No education requirement was stated in the posting, so the candidate's degree(s) are not a blocker.",
-        }
-
-    if "related field" in text:
-        return {
-            "status": "check",
-            "citation": f"Posting accepts a degree '...or related field'; candidate holds: {degree_summary}.",
-            "explanation": "The posting's open-ended 'or related field' language is satisfied by the candidate's quantitative degree(s).",
-        }
-
-    field_match = next(
-        (field for field in degree_fields if any(
-            word in text for word in field.lower().split() if len(word) > 3
-        )),
-        None,
-    )
-    if field_match:
-        return {
-            "status": "check",
-            "citation": f"Candidate's '{field_match}' degree matches a field named in the posting's requirements.",
-            "explanation": "The candidate's degree field is explicitly named in the posting's qualifications.",
-        }
-
-    requirement_match = re.search(r"[^.]*degree[^.]*\.", text)
-    requirement_text = requirement_match.group().strip() if requirement_match else "a specific degree field"
-    return {
-        "status": "x",
-        "citation": f"Posting requirement: \"{requirement_text}\"; candidate holds: {degree_summary}.",
-        "explanation": "The candidate's degree field(s) don't textually match the specific field(s) named in the posting.",
+                     "(no verifiable, real project name was confirmed for a swap, "
+                     "even after being asked to correct it -- Evidence Rule).",
     }
 
 
@@ -213,53 +168,72 @@ def _format_projects(projects: list) -> str:
     return "\n".join(lines)
 
 
-SYSTEM_PROMPT = """You are a meticulous, honest fit-analysis assistant inside a job search \
-agent. You compare ONE job posting against ONE candidate's real profile \
-(resume + full project portfolio + master skills list + memory facts).
-
-Three of the five fit dimensions -- Seniority, Education, and Core Skills \
--- are computed for you deterministically (given below as DETERMINISTIC \
-ANALYSIS). Do not recompute or contradict them. Your job is the two \
-dimensions that require real judgment: Relevant Experience and Projects, \
-plus the project-swap recommendation and overall summary.
+SYSTEM_PROMPT = """You are the reasoning core of a job search agent. For ONE job posting and \
+ONE candidate's real profile (resume + full project portfolio + master \
+skills list + memory facts), answer: "Tell me why this job is a good fit \
+for me." You must produce all five fit dimensions yourself -- Relevant \
+Experience, Seniority, Education, Core Skills, Projects -- each grounded \
+in something real. Nothing is pre-decided for you; you are given factual \
+REFERENCE DATA (skill overlap, years comparison, degree comparison) to \
+ground your answer in real facts and avoid hallucinating, but the \
+check/x verdict, the citation, and the reasoning are yours to determine.
 
 Hard rules, no exceptions:
-1. Every claim you make must be traceable to something literally present in \
-the CANDIDATE PROFILE given to you below. Never invent a skill, project, \
-job title, or achievement.
-2. The "evidenced_elsewhere" and "genuine_gap" skill lists given to you are \
-already correct and final -- do not move skills between buckets or add new \
-ones.
-3. For the project recommendation: you may only recommend swapping in a \
-project from the "PORTFOLIO ONLY" list below (never invent one), or \
-explicitly say the current on-resume projects are already optimal.
-4. Output ONLY a single valid JSON object. No markdown code fences, no \
-commentary before or after, no trailing commas.
-5. "citation" fields must NEVER be left empty -- always quote or closely \
-paraphrase the specific resume line, portfolio entry, or job-posting detail \
-that backs your status/explanation for that dimension.
+1. Every claim must be traceable to something literally present in the \
+CANDIDATE PROFILE or JOB POSTING given below. Never invent a skill, \
+project, job title, achievement, or requirement.
+2. Use the REFERENCE DATA (skill buckets, years comparison, degree \
+comparison) as your factual source of truth for those specific facts -- \
+don't contradict what it says happened (e.g. don't claim a skill is a \
+genuine gap if REFERENCE DATA lists it as evidenced elsewhere) -- but YOU \
+decide the check/x verdict and write the reasoning based on those facts.
+3. Core Skills must be split into exactly the three groups given in \
+REFERENCE DATA: aligned (already on resume), missing-but-evidenced \
+(usable by resume tailoring later), genuine gaps (never to be added to \
+the resume). Don't move skills between groups.
+4. For Projects: actively compare each ON RESUME project's domain/tech \
+against this job's domain and its "missing_evidenced" skills. If ANY \
+"PORTFOLIO ONLY" project's domain or tech stack overlaps with this job \
+better than an ON RESUME project does, you MUST recommend that swap -- \
+don't default to "already optimal" just because the on-resume projects \
+are decent; the question is whether a portfolio-only project is a BETTER \
+fit, not whether the current one is acceptable. Only say "already \
+optimal" if you genuinely checked every portfolio-only project and none \
+of them fit this job's domain/skills better than what's already on the \
+resume. You may only recommend swapping in a project from the "PORTFOLIO \
+ONLY" list below (never invent one).
+5. "relevant_experience" is about the NATURE and DOMAIN of the \
+candidate's past work (what they built, which industry, which \
+responsibilities) -- NOT about years of experience (that's Seniority's \
+job). Having MORE years than required is never a reason to mark \
+relevant_experience "x"; only mark it "x" if the type of work described \
+doesn't relate to what this posting needs.
 6. Status semantics -- mark "check" only when the candidate meets or \
-exceeds the job's bar for that dimension. Mark "x" only when the candidate \
-clearly falls short of what the posting asks for.
-7. "relevant_experience" is about the NATURE and DOMAIN of the candidate's \
-past work (what they built, which industry, which responsibilities) --  \
-it is NOT about years of experience (Seniority already covers years and \
-is resolved above). Having MORE years than required is never a reason to \
-mark this "x"; only mark "x" if the actual work described doesn't relate \
-to what this posting needs.
+exceeds the job's bar for that dimension; mark "x" only when they clearly \
+fall short.
+7. Citation and explanation fields must NEVER be left empty.
+8. Output ONLY a single valid JSON object. No markdown code fences, no \
+commentary before or after, no trailing commas.
 
 Respond with EXACTLY this JSON shape (fill in every field):
 {
   "relevant_experience": {"status": "check" or "x", "citation": "<verbatim or near-verbatim resume/portfolio detail>", "explanation": "<1-2 sentences>"},
-  "projects": {"status": "check" or "x", "citation": "<detail>", "explanation": "<1-2 sentences>"},
-  "project_swap": {
-    "recommended": true or false,
-    "weak_resume_project": "<exact project name from ON RESUME list, or null>",
-    "better_portfolio_project": "<exact project name from PORTFOLIO ONLY list, or null>",
-    "reasoning": "<1-3 sentences, cite the job's domain/skills and the project's domain/tech>"
+  "seniority": {"status": "check" or "x", "citation": "<detail>", "explanation": "<1-2 sentences>"},
+  "education": {"status": "check" or "x", "citation": "<detail>", "explanation": "<1-2 sentences>"},
+  "core_skills": {
+    "aligned": ["<skill>", "..."],
+    "missing_evidenced": [{"skill": "<skill>", "evidence": "<where it's evidenced -- portfolio project name, master skills list, or memory>"}],
+    "genuine_gap": ["<skill>", "..."]
+  },
+  "projects": {
+    "current_weak_project": "<exact name from ON RESUME list, or null if already optimal>",
+    "weak_project_note": "<why it contributes little to this job, or null>",
+    "swap_suggestion": {"project": "<exact name from PORTFOLIO ONLY list>", "reasoning": "<1-3 sentences citing tech/domain overlap with the job>"} ,
+    "already_optimal": true or false
   },
   "overall_summary": "<2-3 sentence honest overall fit summary>"
-}"""
+}
+If already_optimal is true, set current_weak_project, weak_project_note, and swap_suggestion to null."""
 
 
 def _build_user_prompt(job: dict, profile: dict, skill_buckets: dict, score_breakdown: dict) -> str:
@@ -290,15 +264,28 @@ Master skills list: {', '.join(profile['master_skills'])}
 Memory-learned facts (skills confirmed by the candidate after the resume was written): {', '.join(profile['memory_skills']) or '(none yet)'}
 Candidate years of experience: {profile['candidate_years']}
 
-DETERMINISTIC ANALYSIS (already computed, do not recompute or contradict):
-- Required skills already on resume: {', '.join(skill_buckets['on_resume']) or '(none)'}
-- Required skills evidenced elsewhere in profile (portfolio/master-skills/memory, but NOT yet on resume -- tailoring MAY add these): {', '.join(skill_buckets['evidenced_elsewhere']) or '(none)'}
-- Required skills that are a genuine gap (not evidenced anywhere -- NEVER add these): {', '.join(skill_buckets['genuine_gap']) or '(none)'}
-- Candidate years of experience {profile['candidate_years']} vs. posting's required {score_breakdown['min_years_required']}+ -> Seniority dimension already resolved.
-- Candidate degree field(s) {', '.join(profile['degree_fields']) or '(none)'} vs. posting's stated requirement -> Education dimension already resolved.
-- Overall deterministic score: {score_breakdown['score']} (skill_match={score_breakdown['skill_match']}, experience_alignment={score_breakdown['experience_alignment']}, domain_alignment={score_breakdown['domain_alignment']})
+REFERENCE DATA (factual only -- you still decide the verdict and write the reasoning):
+- Required skills already on resume (use for core_skills.aligned): {', '.join(skill_buckets['on_resume']) or '(none)'}
+- Required skills evidenced elsewhere in profile, not yet on resume (use for core_skills.missing_evidenced): {', '.join(skill_buckets['evidenced_elsewhere']) or '(none)'}
+- Required skills not evidenced anywhere (use for core_skills.genuine_gap): {', '.join(skill_buckets['genuine_gap']) or '(none)'}
+- Seniority facts: {_seniority_facts(job, profile, score_breakdown)}
+- Education facts: {_education_facts(job, profile)}
+- Deterministic score for context only (not a verdict on any dimension): {score_breakdown['score']} (skill_match={score_breakdown['skill_match']}, experience_alignment={score_breakdown['experience_alignment']}, domain_alignment={score_breakdown['domain_alignment']})
 
 Now produce the JSON fit analysis described in your instructions."""
+
+
+CORRECTION_PROMPT_TEMPLATE = """Your "projects" field named a project that doesn't exist in the candidate's real portfolio: \
+weak_resume_project={weak!r}, swap_suggestion.project={better!r}.
+
+The ONLY valid project names are:
+- ON RESUME (valid for current_weak_project): {on_resume_names}
+- PORTFOLIO ONLY (valid for swap_suggestion.project): {portfolio_only_names}
+
+Re-send the FULL JSON object again, unchanged except: fix the "projects" \
+field to use exact names from those two lists, or set already_optimal \
+true with current_weak_project/swap_suggestion as null if no real project \
+pairing makes sense. Output ONLY the corrected JSON object."""
 
 
 def _extract_json(raw: str) -> dict:
@@ -323,28 +310,58 @@ def _extract_json(raw: str) -> dict:
     return json.loads(repaired)
 
 
+def _is_blank(entry: dict) -> bool:
+    """A dimension counts as blank if its citation is missing -- that's
+    the field the assignment says must never be empty, so it's worth a
+    retry even if the explanation text alone came through fine."""
+    entry = entry or {}
+    return not (entry.get("citation") or "").strip()
+
+
+def _fill_blank_fallbacks(parsed: dict) -> dict:
+    for dim in ("relevant_experience", "seniority", "education"):
+        entry = parsed.get(dim) or {}
+        if not entry.get("citation"):
+            entry["citation"] = "(model did not provide a citation for this dimension)"
+        if not entry.get("explanation"):
+            entry["explanation"] = "(model did not provide an explanation for this dimension)"
+        if entry.get("status") not in ("check", "x"):
+            entry["status"] = "x"
+        parsed[dim] = entry
+    return parsed
+
+
+def _swap_names(projects_field: dict) -> tuple:
+    projects_field = projects_field or {}
+    weak = projects_field.get("current_weak_project")
+    swap = projects_field.get("swap_suggestion") or {}
+    better = swap.get("project") if isinstance(swap, dict) else None
+    return weak, better
+
+
 def analyze_fit(job: dict, profile: dict, score_breakdown: dict = None, retries: int = 2) -> dict:
-    """Returns the structured fit-analysis dict for one job, with the
-    deterministic skill_buckets and score merged in (so downstream tools
-    -- Tailoring -- get everything from one object)."""
+    """Returns the structured fit-analysis dict for one job. Every
+    dimension's verdict/citation/explanation is the model's own output;
+    Python only supplies grounding facts beforehand and fact-checks the
+    project-swap's project names afterward (with a self-correction turn
+    given to the model before any fallback)."""
     skill_buckets = classify_required_skills(job, profile)
     score_breakdown = score_breakdown or score_job(job, profile)
     user_prompt = _build_user_prompt(job, profile, skill_buckets, score_breakdown)
 
-    def _is_blank(entry: dict) -> bool:
-        entry = entry or {}
-        return not (entry.get("citation") or "").strip() and not (entry.get("explanation") or "").strip()
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": user_prompt},
+    ]
 
     last_error = None
     parsed = None
+    raw = None
     for attempt in range(retries + 1):
         raw = chat(
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt},
-            ],
-            # Slightly higher temperature on retries so a re-ask isn't just
-            # a coin-flip repeat of the same blank/low-quality response.
+            messages=messages,
+            # Slightly higher temperature on retries so a re-ask isn't
+            # just a coin-flip repeat of the same blank/low-quality response.
             temperature=0.2 if attempt == 0 else 0.4,
             response_format={"type": "json_object"},
         )
@@ -356,11 +373,13 @@ def analyze_fit(job: dict, profile: dict, score_breakdown: dict = None, retries:
 
         parsed = candidate
         is_last_attempt = attempt == retries
-        both_blank = _is_blank(candidate.get("relevant_experience")) and _is_blank(candidate.get("projects"))
-        if not both_blank or is_last_attempt:
+        any_dim_blank = any(
+            _is_blank(candidate.get(dim)) for dim in ("relevant_experience", "seniority", "education")
+        )
+        if not any_dim_blank or is_last_attempt:
             break
-        # Both judgment dimensions came back empty -- worth one more try
-        # before falling back to placeholder text.
+        # At least one scalar dimension came back empty -- worth one more
+        # try before falling back to placeholder text.
 
     if parsed is None:
         raise RuntimeError(
@@ -368,25 +387,54 @@ def analyze_fit(job: dict, profile: dict, score_breakdown: dict = None, retries:
             f"Last error: {last_error}"
         )
 
-    for dim in ("relevant_experience", "projects"):
-        entry = parsed.get(dim) or {}
-        if not entry.get("citation"):
-            entry["citation"] = "(model did not provide a citation for this dimension)"
-        if not entry.get("explanation"):
-            entry["explanation"] = "(model did not provide an explanation for this dimension)"
-        if entry.get("status") not in ("check", "x"):
-            entry["status"] = "x"
-        parsed[dim] = entry
-
-    parsed["seniority"] = compute_seniority_dimension(job, profile, score_breakdown)
-    parsed["education"] = compute_education_dimension(job, profile)
-    parsed["core_skills"] = compute_core_skills_dimension(skill_buckets, score_breakdown)
+    parsed = _fill_blank_fallbacks(parsed)
 
     on_resume_names = [p["name"] for p in profile["portfolio_projects"] if p["on_resume"]]
     portfolio_only_names = [p["name"] for p in profile["portfolio_projects"] if not p["on_resume"]]
-    parsed["project_swap"] = _validate_project_swap(
-        parsed.get("project_swap"), on_resume_names, portfolio_only_names
+
+    weak, better = _swap_names(parsed.get("projects"))
+    weak_valid = not weak or weak.lower() in [n.lower() for n in on_resume_names]
+    better_valid = not better or better.lower() in [n.lower() for n in portfolio_only_names]
+
+    if (weak or better) and not (weak_valid and better_valid):
+        # Give the model one self-correction turn (a real second LLM call,
+        # visible in the trace) instead of silently overwriting its answer.
+        messages.append({"role": "assistant", "content": raw})
+        messages.append({
+            "role": "user",
+            "content": CORRECTION_PROMPT_TEMPLATE.format(
+                weak=weak, better=better,
+                on_resume_names=on_resume_names,
+                portfolio_only_names=portfolio_only_names,
+            ),
+        })
+        try:
+            corrected_raw = chat(messages=messages, temperature=0.2, response_format={"type": "json_object"})
+            corrected = _extract_json(corrected_raw)
+            corrected = _fill_blank_fallbacks(corrected)
+            parsed["projects"] = corrected.get("projects") or parsed.get("projects")
+        except (ValueError, json.JSONDecodeError):
+            pass  # fall through to the fact-check fallback below
+
+    projects_field = parsed.get("projects") or {}
+    parsed["projects"] = projects_field
+    weak, better = _swap_names(projects_field)
+    swap_reasoning = ((projects_field.get("swap_suggestion") or {}).get("reasoning")
+                       if isinstance(projects_field.get("swap_suggestion"), dict) else None)
+    verified_swap = _validate_project_swap(
+        {
+            "weak_resume_project": weak,
+            "better_portfolio_project": better,
+            "reasoning": swap_reasoning,
+        },
+        on_resume_names,
+        portfolio_only_names,
     )
+    parsed["project_swap"] = verified_swap
+    parsed["projects"]["already_optimal"] = not verified_swap["recommended"]
+    if not verified_swap["recommended"]:
+        parsed["projects"]["current_weak_project"] = None
+        parsed["projects"]["swap_suggestion"] = None
 
     parsed["job_id"] = job["job_id"]
     parsed["title"] = job["title"]
@@ -406,30 +454,39 @@ def format_report(analysis: dict) -> str:
         symbol = mark.get(d["status"], "\u2753")
         return f"{symbol} {label}: {d['explanation']}\n   Citation: {d['citation']}"
 
+    core = analysis["core_skills"] or {}
+    aligned = core.get("aligned") or []
+    missing_evidenced = core.get("missing_evidenced") or []
+    genuine_gap = core.get("genuine_gap") or []
+    missing_evidenced_str = ", ".join(
+        f"{m['skill']} ({m.get('evidence', 'evidenced elsewhere')})" if isinstance(m, dict) else str(m)
+        for m in missing_evidenced
+    ) or "(none)"
+
     swap = analysis["project_swap"]
     if swap.get("recommended"):
         swap_text = (
-            f"\u2192 Swap recommended: replace \"{swap['weak_resume_project']}\" with "
+            f"\u2705 Swap Suggestion: Replace \"{swap['weak_resume_project']}\" with "
             f"\"{swap['better_portfolio_project']}\".\n   Reasoning: {swap['reasoning']}"
         )
     else:
-        swap_text = f"\u2192 Current projects are already optimal. {swap.get('reasoning', '')}"
+        swap_text = f"\u2705 Current projects are already optimal. {swap.get('reasoning', '')}"
 
-    buckets = analysis["skill_buckets"]
     score = analysis["score_breakdown"]
 
     return f"""FIT ANALYSIS: {analysis['title']} @ {analysis['company']}  [{analysis['job_id']}]
-Deterministic score: {score['score']}  (skill_match={score['skill_match']}, experience_alignment={score['experience_alignment']}, domain_alignment={score['domain_alignment']})
+Deterministic score (from scoring.py, not this tool): {score['score']}  (skill_match={score['skill_match']}, experience_alignment={score['experience_alignment']}, domain_alignment={score['domain_alignment']})
 
 {line('relevant_experience', 'Relevant Experience')}
 {line('seniority', 'Seniority')}
 {line('education', 'Education')}
-{line('core_skills', 'Core Skills')}
-{line('projects', 'Projects')}
 
-Missing skills -- evidenced elsewhere (tailoring may add): {', '.join(buckets['evidenced_elsewhere']) or '(none)'}
-Missing skills -- genuine gap (never add): {', '.join(buckets['genuine_gap']) or '(none)'}
+Core Skills:
+\u2705 Aligned: {', '.join(aligned) or '(none)'}
+\u274c Missing but evidenced in profile: {missing_evidenced_str}
+\u274c Genuine gaps: {', '.join(genuine_gap) or '(none)'}
 
+Projects:
 {swap_text}
 
 Overall: {analysis['overall_summary']}

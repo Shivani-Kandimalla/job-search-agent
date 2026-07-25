@@ -116,67 +116,65 @@ workstream is designed to exploit.
 
 ---
 
-## Fit Analysis (Section 3.2, second half)
+## Fit Analysis (Section 3.3)
 
 `agent/tools/fit_analysis.py` makes one LLM call per Top-3 job (local
-`llama3.2` via Ollama, JSON-constrained output). To keep a small local
-model from hallucinating, the analysis is split by how *objective* each
-dimension is:
+`llama3.2` via Ollama, JSON-constrained output), and **all five dimensions'
+verdicts and text are the model's own output** — Python never decides a
+✅/❌ on the model's behalf. This is a deliberate design correction: Section
+3.2 explicitly calls Scoring "deterministic; NOT an LLM call," but Section
+3.3 never says that about Fit Analysis — it's framed purely as an LLM
+narrative task ("Tell me why this job is a good fit for me... Text output
+is enough"), so the assignment's "The LLM drives — hard-coded scripts that
+execute fixed steps without LLM decision-making will lose points" rule
+applies here in full.
 
-- **Computed in Python (no LLM judgment involved):** Seniority (years
-  comparison), Education (keyword match between the candidate's degree
-  field(s), parsed straight out of the resume, and the posting's stated
-  requirement — defaults to a pass if the posting doesn't specify a field,
-  or says "...or related field"), and Core Skills (the same skill-bucket
-  split described below, thresholded at 50% coverage).
-- **Left to the LLM, because it genuinely requires judgment:** Relevant
-  Experience (is the *nature* of the candidate's past work relevant to
-  this role, independent of years) and Projects (do the on-resume projects
-  read as a fit), plus the project-swap recommendation and overall
-  summary.
+What Python *does* do — and this is legitimate tool integration, not
+hard-coding a decision — is hand the model accurate **reference facts**
+before it reasons:
+- Which of the job's required skills are already on the resume, evidenced
+  elsewhere in the profile (portfolio-only project / master skills list /
+  memory), or a genuine gap nowhere in the candidate's real materials.
+- The years-of-experience comparison and the candidate's degree field(s)
+  vs. the posting's stated requirement.
 
-Every dimension still ends up with a status (✅/❌) and a citation into the
-real resume/portfolio/job text — the assignment's 5-dimension, "cite
-something real" requirement is satisfied either way.
+The model must use these facts as ground truth (it's told not to
+contradict them) but still writes the check/x verdict, the citation, and
+the reasoning itself for every one of the five dimensions — Relevant
+Experience, Seniority, Education, Core Skills, Projects. That LLM response
+is the actual reasoning trace a grader would see, not a Python dict
+spliced in afterward.
 
-**Missing-skills two-bucket split** (computed once, shared verbatim with
-the LLM so it can't contradict it):
+**Missing-skills two-bucket split** — the reference facts above are
+reproduced by the model into `core_skills.missing_evidenced` (safe for the
+Tailoring workstream to add to the resume) vs. `core_skills.genuine_gap`
+(never to be added, reported honestly instead), matching Section 3.3's own
+example format exactly.
 
-- **evidenced elsewhere** — a required skill not literally on the resume,
-  but real: it shows up in a portfolio-only project, the master skills
-  list, or a memory-learned fact. Safe for the Tailoring workstream to add
-  to the resume.
-- **genuine gap** — not evidenced anywhere in the candidate's actual
-  materials. Must never be added; reported honestly instead.
-
-**Project-swap Evidence Rule enforcement:** the LLM is only allowed to
-recommend swapping in a project from the real "portfolio-only" list, never
-an invented one. Rather than trust the model's own `recommended` boolean
-(it occasionally set `false` while its reasoning text still argued for a
-swap), the code re-derives `recommended` from whether both project names
-it returned exactly match a real project — if they don't, the suggestion
-is discarded and replaced with an honest "current projects are already
-optimal" fallback, regardless of what the model claimed.
+**Project-swap Evidence Rule enforcement (fact-check, not judgment
+override):** the model can only name a swap project from the real
+"portfolio-only" list. If it names something that doesn't exist, the tool
+gives it **one self-correction turn** — a second, visible LLM call telling
+it exactly which real project names are valid and asking it to fix just
+that field — before ever falling back to "no swap." This mirrors the
+assignment's own Evidence Rule ("no evidence means no edit") without
+overriding the model's actual reasoning about *which* project is the
+better fit whenever it names real ones.
 
 ### Sample swap recommendation (for the report)
 
-Job **J21** (Target, Sr Applied Data Scientist — Search & Browse):
-> Swap recommended: replace **"E-commerce Product Recommendation Engine"**
-> with **"Demand Forecasting for Retail Supply Chain"**.
-> Reasoning: the candidate's existing recommendation-engine project doesn't
-> address the posting's search-ranking/retrieval focus; the demand
-> forecasting project demonstrates the same Retail/E-commerce domain via
-> different, still-relevant technical depth (time-series forecasting,
-> large-scale data pipelines).
+Job **J14** (Experian Health, MLOps Engineer):
+> ✅ Swap Suggestion: replace **"Customer Support RAG Chatbot"** with
+> **"Medical Imaging Anomaly Detector"**.
+> Reasoning: this portfolio-only project demonstrates experience with
+> PyTorch, CNNs, and healthcare-domain expertise, more directly relevant
+> to the posting than the RAG chatbot project.
 
-A second validated swap example, job **J14** (Experian Health, MLOps
-Engineer): replace **"Patient Readmission Risk Predictor"** with
-**"Medical Imaging Anomaly Detector"** — both are Healthcare-domain
-projects, but the posting's AWS/MLOps-pipeline focus made the tailoring
-team want a different real project than the default resume pick. Job
-**J18** came back "current projects are already optimal" (a legitimate,
-non-swap outcome — the resume's existing skills already cover 80% of the
-posting's needs).
+Jobs **J18** and **J21** came back "current projects are already optimal"
+this run — a legitimate outcome the model is explicitly allowed to reach,
+though it's worth noting the local model is stochastic here: re-running
+`fit_analysis.py` can change which job(s) get a swap suggestion from one
+run to the next.
 
 Full saved fit analyses for all Top 3 jobs: `outputs/J18/fit_analysis.txt`,
 `outputs/J21/fit_analysis.txt`, `outputs/J14/fit_analysis.txt` (plus
@@ -184,12 +182,17 @@ Full saved fit analyses for all Top 3 jobs: `outputs/J18/fit_analysis.txt`,
 
 ### Known limitation (candidate for the report's ethics/honesty reflection)
 
-Even with JSON-constrained output and a deterministic core, the local 3B
-model occasionally writes free-text reasoning that slightly overstates a
-project's fit (e.g. attributing a tech-stack item to a project that
-doesn't list it) — a real illustration of why the Evidence Rule is
-enforced in *code*, not just prompted for: a small model can't be fully
-trusted to self-police factual grounding in prose, so anything that feeds
-a structured decision (skill buckets, swap validity, seniority, education)
-is computed outside the model, and only genuinely qualitative narrative is
-left to it.
+Because every dimension's verdict now genuinely comes from the local 3B
+model's own reasoning (as the assignment requires), quality is visibly
+less consistent than a fully hard-coded version would be — e.g. the model
+sometimes marks "Seniority" ❌ for a candidate who has *more* years than
+required, reasoning that their years aren't in the *specific* sub-domain
+the posting wants, which is a defensible-but-debatable judgment call, not
+a factual error, since the underlying years-comparison fact it was given
+was correct. This is the real, disclosed trade-off of following the
+assignment's "LLM drives" rule with a small local model instead of a
+larger paid one: the reasoning trace is authentically the model's own,
+but its qualitative judgment is not always what a human reviewer would
+choose. A larger model (e.g. GPT-4-class) would likely be materially more
+consistent here without any code changes, since the prompt and grounding
+data would be unchanged — only the reasoning quality would improve.

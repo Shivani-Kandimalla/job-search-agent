@@ -1,35 +1,52 @@
 {
   "relevant_experience": {
     "status": "check",
-    "citation": "Built and deployed a patient readmission risk model (XGBoost, SHAP) for a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.",
-    "explanation": "The candidate has experience in predictive modeling and deployment, which aligns with the job posting's requirements."
+    "citation": "Built and deployed a patient readmission risk model using XGBoost and SHAP, achieving 0.81 AUC on held-out data.",
+    "explanation": "The candidate has relevant experience in building and deploying predictive models for healthcare, which aligns with the job's requirements."
   },
-  "projects": {
-    "status": "x",
-    "citation": "(model did not provide a citation for this dimension)",
-    "explanation": "Although the candidate has built recommender systems and chatbots, their projects do not directly address the job posting's specific requirements for search ranking, browse personalization, semantic retrieval, and query understanding."
-  },
-  "project_swap": {
-    "recommended": true,
-    "weak_resume_project": "E-commerce Product Recommendation Engine",
-    "better_portfolio_project": "Demand Forecasting for Retail Supply Chain",
-    "reasoning": "The candidate's recommender system project is strong, but the demand forecasting project better aligns with the job posting's requirements for search ranking and personalization. The construction site safety vision monitor project does not directly relate to the job posting's domain."
-  },
-  "overall_summary": "While the candidate has relevant experience in predictive modeling and deployment, their projects do not directly address the job posting's specific requirements. They have a strong foundation in recommender systems, but may need to develop skills in search ranking, browse personalization, semantic retrieval, and query understanding.",
   "seniority": {
-    "status": "check",
-    "citation": "Candidate has 4 years of experience (persona_preferences.json); posting lists '3+' (3+ years required).",
-    "explanation": "Meets the seniority bar: 4 years >= 3+ required."
+    "status": "x",
+    "citation": "Candidate has 4 years of experience, but the posting requires at least 3+ years.",
+    "explanation": "Although the candidate meets the minimum required experience, they have more than 3 years of experience, which may make them a strong contender for the role."
   },
   "education": {
     "status": "check",
-    "citation": "Posting does not state a specific degree requirement; candidate holds: Data Science, Statistics.",
-    "explanation": "No education requirement was stated in the posting, so the candidate's degree(s) are not a blocker."
+    "citation": "Holds an M.S. in Data Science from Fictional State University.",
+    "explanation": "The candidate holds a relevant degree in data science, which aligns with the job's requirements."
   },
   "core_skills": {
-    "status": "check",
-    "citation": "On resume: Embeddings, GenAI/RAG systems. Evidenced elsewhere in profile: retrieval and ranking models, NLP. Genuine gaps: transformers, vector search, query understanding.",
-    "explanation": "71% of required skills are evidenced somewhere in the candidate's real profile (meets the 50% bar)."
+    "aligned": [
+      "Embeddings",
+      "GenAI/RAG systems"
+    ],
+    "missing_evidenced": [
+      {
+        "skill": "retrieval and ranking models",
+        "evidence": "Fraud Detection Pipeline for Payments [PORTFOLIO ONLY]"
+      },
+      {
+        "skill": "NLP",
+        "evidence": "E-commerce Product Recommendation Engine [ON RESUME]"
+      }
+    ],
+    "genuine_gap": [
+      "transformers",
+      "vector search",
+      "query understanding"
+    ]
+  },
+  "projects": {
+    "current_weak_project": null,
+    "weak_project_note": null,
+    "swap_suggestion": null,
+    "already_optimal": true
+  },
+  "overall_summary": "While the candidate meets some of the job's requirements, they lack experience with transformers, vector search, and query understanding. However, their portfolio projects demonstrate expertise in related areas, such as computer vision and deep learning. With some adjustments to their resume and portfolio, the candidate may be a strong contender for the role.",
+  "project_swap": {
+    "recommended": false,
+    "weak_resume_project": null,
+    "better_portfolio_project": null,
+    "reasoning": "Current on-resume projects are retained as already optimal (no verifiable, real project name was confirmed for a swap, even after being asked to correct it -- Evidence Rule)."
   },
   "job_id": "J21",
   "title": "Sr Applied Data Scientist - Search and Browse (Applied ML, NLP, LLMs)",

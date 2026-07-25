@@ -1,35 +1,55 @@
 {
   "relevant_experience": {
     "status": "check",
-    "citation": "Built and deployed a patient readmission risk model (XGBoost, SHAP) used by a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.",
-    "explanation": "The candidate has relevant experience in healthcare, specifically with predictive risk modeling and deployment of machine learning models."
+    "citation": "Built and deployed a patient readmission risk model using EHR and claims data; designed feature pipelines over EHR and claims data to cut model retraining turnaround time from two weeks to three days.",
+    "explanation": "The candidate has experience building and deploying machine learning models in the healthcare domain, which aligns with the job requirements."
   },
-  "projects": {
+  "seniority": {
     "status": "x",
     "citation": "(model did not provide a citation for this dimension)",
-    "explanation": "Although the candidate has built and deployed a patient readmission risk model, it is not directly related to the job posting's requirements for operationalizing ML models on AWS. The candidate's experience with E-commerce Product Recommendation Engine and Customer Support RAG Chatbot is also not directly relevant to the healthcare domain required by the job posting."
-  },
-  "project_swap": {
-    "recommended": true,
-    "weak_resume_project": "Patient Readmission Risk Predictor",
-    "better_portfolio_project": "Medical Imaging Anomaly Detector",
-    "reasoning": "The candidate's current projects on resume are not directly relevant to the healthcare domain required by the job posting. The Medical Imaging Anomaly Detector project, however, has a strong connection to the healthcare domain and could be a good fit for this role."
-  },
-  "overall_summary": "While the candidate has some relevant experience in machine learning and deployment of models, their current projects are not directly related to the healthcare domain required by the job posting. The Medical Imaging Anomaly Detector project shows promise as a potential swap-in candidate.",
-  "seniority": {
-    "status": "check",
-    "citation": "Candidate has 4 years of experience (persona_preferences.json); posting lists '3+' (3+ years required).",
-    "explanation": "Meets the seniority bar: 4 years >= 3+ required."
+    "explanation": "Although the candidate has 4 years of experience, the posting requires at least 3+ years of experience."
   },
   "education": {
     "status": "check",
-    "citation": "Posting accepts a degree '...or related field'; candidate holds: Data Science, Statistics.",
-    "explanation": "The posting's open-ended 'or related field' language is satisfied by the candidate's quantitative degree(s)."
+    "citation": "M.S. in Data Science from Fictional State University; B.S. in Statistics from Northbridge University.",
+    "explanation": "The candidate holds a Master's degree in Data Science and a Bachelor's degree in Statistics, which aligns with the posting's qualifications."
   },
   "core_skills": {
-    "status": "check",
-    "citation": "On resume: Python, AWS SageMaker, Docker. Evidenced elsewhere in profile: Lambda, TensorFlow Serving. Genuine gaps: Step Functions, Kubernetes (EKS), MLflow, Kubeflow, Terraform, CloudFormation.",
-    "explanation": "55% of required skills are evidenced somewhere in the candidate's real profile (meets the 50% bar)."
+    "aligned": [
+      "Python",
+      "AWS SageMaker",
+      "Docker"
+    ],
+    "missing_evidenced": [
+      {
+        "skill": "Lambda",
+        "evidence": "PORTFOLIO ONLY: Fraud Detection Pipeline for Payments"
+      }
+    ],
+    "genuine_gap": [
+      "Step Functions",
+      "Kubernetes (EKS)",
+      "MLflow",
+      "Kubeflow",
+      "Terraform",
+      "CloudFormation"
+    ]
+  },
+  "projects": {
+    "current_weak_project": "Customer Support RAG Chatbot",
+    "weak_project_note": "Although this project demonstrates the candidate's ability to build a retrieval-augmented generation chatbot, it may not directly address the job requirements for operationalizing ML models and maintaining scalable infrastructure.",
+    "swap_suggestion": {
+      "project": "Medical Imaging Anomaly Detector",
+      "reasoning": "This portfolio-only project demonstrates experience with PyTorch, CNNs, and healthcare domain expertise, which could be valuable in addressing the job requirements."
+    },
+    "already_optimal": false
+  },
+  "overall_summary": "The candidate has relevant experience building machine learning models in the healthcare domain, but lacks direct experience with AWS services and MLOps pipelines. With some adjustments to their portfolio projects, they may be a good fit for this role.",
+  "project_swap": {
+    "recommended": true,
+    "weak_resume_project": "Customer Support RAG Chatbot",
+    "better_portfolio_project": "Medical Imaging Anomaly Detector",
+    "reasoning": "This portfolio-only project demonstrates experience with PyTorch, CNNs, and healthcare domain expertise, which could be valuable in addressing the job requirements."
   },
   "job_id": "J14",
   "title": "MLOps Engineer, Machine Learning Engineer (Remote)",
