@@ -1,0 +1,72 @@
+[
+  {
+    "section": "summary",
+    "before": "Data Scientist / Machine Learning Engineer with 4 years of experience building and deploying ML systems across healthcare and retail/e-commerce, spanning predictive risk modeling, recommendation systems, and retrieval-augmented generation. Strong Python and SQL foundation with hands-on production experience in PyTorch, AWS SageMaker, and Databricks. Targets Data Scientist, Machine Learning Engineer, and Applied Scientist roles.",
+    "after": "Results-driven Data Scientist with 4+ years of experience building and deploying ML systems across healthcare and retail/e-commerce, driving business growth through predictive risk modeling, recommendation systems, and retrieval-augmented generation.",
+    "citation": "fit_analysis relevant_experience/seniority/education/core_skills",
+    "reason": "Emphasized the candidate's relevant experience, skills, and achievements in building and deploying ML systems across healthcare and retail/e-commerce, highlighting their ability to drive business growth through predictive risk modeling, recommendation systems, and retrieval-augmented generation."
+  },
+  {
+    "section": "experience-bullet-1",
+    "before": "Built and deployed a patient readmission risk model (XGBoost, SHAP) used by a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.",
+    "after": "Built and deployed a patient readmission risk model (XGBoost, SHAP) that achieved 0.81 AUC on held-out data for a regional hospital network's care-coordination team.",
+    "citation": "fit_analysis relevant_experience / core_skills",
+    "reason": "The rewritten bullet emphasizes the candidate's achievement of 0.81 AUC on held-out data, which is a key metric for evaluating model performance."
+  },
+  {
+    "section": "experience-bullet-2",
+    "before": "Designed feature pipelines over EHR and claims data in SQL and Python, cutting model retraining turnaround time from two weeks to three days.",
+    "after": "Designed feature pipelines over EHR and claims data in SQL and Python, reducing model retraining turnaround time from two weeks to three days and improving overall efficiency.",
+    "citation": "fit_analysis relevant_experience / core_skills",
+    "reason": "The rewritten bullet highlights the improvement in model retraining turnaround time from two weeks to three days, demonstrating the candidate's ability to optimize process efficiency."
+  },
+  {
+    "section": "skills",
+    "before": "(not listed)",
+    "after": "GenAI/RAG systems",
+    "citation": "skill_buckets.on_resume (surface-form alignment -- matched via synonym/token overlap, not literal resume wording)",
+    "reason": "Evidenced and relevant to this job's required skills."
+  },
+  {
+    "section": "skills",
+    "before": "(not listed)",
+    "after": "retrieval and ranking models",
+    "citation": "skill_buckets.evidenced_elsewhere",
+    "reason": "Evidenced and relevant to this job's required skills."
+  },
+  {
+    "section": "skills",
+    "before": "(not listed)",
+    "after": "NLP",
+    "citation": "skill_buckets.evidenced_elsewhere",
+    "reason": "Evidenced and relevant to this job's required skills."
+  },
+  {
+    "section": "skills (not applied)",
+    "before": "(not listed)",
+    "after": "(not added)",
+    "citation": "fit_analysis core_skills.genuine_gap",
+    "reason": "'transformers' is a genuine gap -- no evidence anywhere in the profile, never added."
+  },
+  {
+    "section": "skills (not applied)",
+    "before": "(not listed)",
+    "after": "(not added)",
+    "citation": "fit_analysis core_skills.genuine_gap",
+    "reason": "'vector search' is a genuine gap -- no evidence anywhere in the profile, never added."
+  },
+  {
+    "section": "skills (not applied)",
+    "before": "(not listed)",
+    "after": "(not added)",
+    "citation": "fit_analysis core_skills.genuine_gap",
+    "reason": "'query understanding' is a genuine gap -- no evidence anywhere in the profile, never added."
+  },
+  {
+    "section": "project_swap",
+    "before": "(no swap)",
+    "after": "(no swap)",
+    "citation": "fit_analysis.project_swap",
+    "reason": "Current on-resume projects are retained as already optimal (no verifiable, real project name was confirmed for a swap, even after being asked to correct it -- Evidence Rule)."
+  }
+]

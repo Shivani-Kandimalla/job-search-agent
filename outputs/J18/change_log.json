@@ -1,0 +1,58 @@
+[
+  {
+    "section": "summary",
+    "before": "Data Scientist / Machine Learning Engineer with 4 years of experience building and deploying ML systems across healthcare and retail/e-commerce, spanning predictive risk modeling, recommendation systems, and retrieval-augmented generation. Strong Python and SQL foundation with hands-on production experience in PyTorch, AWS SageMaker, and Databricks. Targets Data Scientist, Machine Learning Engineer, and Applied Scientist roles.",
+    "after": "Results-driven AI engineer with a Master's degree in Data Science and experience building ML systems across healthcare and retail/e-commerce, seeking to leverage expertise in computer vision, LLMs, and ML to tackle complex construction technology challenges.",
+    "citation": "fit_analysis relevant_experience/seniority/education/core_skills",
+    "reason": "Emphasized the candidate's experience in deploying ML systems and driving business outcomes through data-driven insights, while highlighting their potential to adapt to construction technology challenges."
+  },
+  {
+    "section": "experience-bullet-1",
+    "before": "Built and deployed a patient readmission risk model (XGBoost, SHAP) used by a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.",
+    "after": "Deployed a patient readmission risk model (XGBoost, SHAP) achieving 0.81 AUC on held-out data, demonstrating ability to drive business outcomes through data-driven insights.",
+    "citation": "fit_analysis relevant_experience / core_skills",
+    "reason": "The rewritten bullet emphasizes the candidate's ability to drive business outcomes through data-driven insights, a key skill for this role."
+  },
+  {
+    "section": "experience-bullet-2",
+    "before": "Designed feature pipelines over EHR and claims data in SQL and Python, cutting model retraining turnaround time from two weeks to three days.",
+    "after": "Streamlined feature pipeline development over EHR and claims data in SQL and Python, reducing retraining turnaround time from two weeks to three days, showcasing expertise in efficient data processing and model deployment.",
+    "citation": "fit_analysis relevant_experience / core_skills",
+    "reason": "The revised bullet highlights the candidate's expertise in efficient data processing and model deployment, a critical aspect of this job posting."
+  },
+  {
+    "section": "skills",
+    "before": "(not listed)",
+    "after": "vector databases",
+    "citation": "skill_buckets.evidenced_elsewhere",
+    "reason": "Evidenced and relevant to this job's required skills."
+  },
+  {
+    "section": "skills",
+    "before": "(not listed)",
+    "after": "computer vision (YOLO, Segment Anything)",
+    "citation": "skill_buckets.evidenced_elsewhere",
+    "reason": "Evidenced and relevant to this job's required skills."
+  },
+  {
+    "section": "skills (not applied)",
+    "before": "(not listed)",
+    "after": "(not added)",
+    "citation": "fit_analysis core_skills.genuine_gap",
+    "reason": "'JAX' is a genuine gap -- no evidence anywhere in the profile, never added."
+  },
+  {
+    "section": "skills (not applied)",
+    "before": "(not listed)",
+    "after": "(not added)",
+    "citation": "fit_analysis core_skills.genuine_gap",
+    "reason": "'LlamaIndex' is a genuine gap -- no evidence anywhere in the profile, never added."
+  },
+  {
+    "section": "project_swap",
+    "before": "E-commerce Product Recommendation Engine",
+    "after": "Construction Site Safety Vision Monitor",
+    "citation": "fit_analysis.project_swap (Stage 2 fact-checked)",
+    "reason": "This project aligns more closely with the required skills and domain of construction technology."
+  }
+]

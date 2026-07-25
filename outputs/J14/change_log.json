@@ -1,0 +1,86 @@
+[
+  {
+    "section": "summary",
+    "before": "Data Scientist / Machine Learning Engineer with 4 years of experience building and deploying ML systems across healthcare and retail/e-commerce, spanning predictive risk modeling, recommendation systems, and retrieval-augmented generation. Strong Python and SQL foundation with hands-on production experience in PyTorch, AWS SageMaker, and Databricks. Targets Data Scientist, Machine Learning Engineer, and Applied Scientist roles.",
+    "after": "Results-driven MLOps Engineer with 4 years of experience building and deploying ML systems across healthcare and retail/e-commerce, seeking a challenging role that leverages my expertise in Python, AWS SageMaker, and scalable MLOps pipelines.",
+    "citation": "fit_analysis relevant_experience/seniority/education/core_skills",
+    "reason": "Emphasized the candidate's experience with deploying ML models, their expertise in AWS SageMaker, and their ability to streamline processes for improved efficiency."
+  },
+  {
+    "section": "experience-bullet-1",
+    "before": "Built and deployed a patient readmission risk model (XGBoost, SHAP) used by a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.",
+    "after": "Deployed a patient readmission risk model (XGBoost, SHAP) with an AUC of 0.81 on held-out data, driving improved care-coordination team outcomes.",
+    "citation": "fit_analysis relevant_experience / core_skills",
+    "reason": "Focused on the deployment of a patient readmission risk model, highlighting its impact on care-coordination team outcomes."
+  },
+  {
+    "section": "experience-bullet-2",
+    "before": "Designed feature pipelines over EHR and claims data in SQL and Python, cutting model retraining turnaround time from two weeks to three days.",
+    "after": "Streamlined model retraining and deployment processes by designing feature pipelines over EHR and claims data in SQL and Python, reducing turnaround time from two weeks to three days.",
+    "citation": "fit_analysis relevant_experience / core_skills",
+    "reason": "Emphasized the candidate's process improvement efforts, showcasing their ability to optimize model retraining and deployment times."
+  },
+  {
+    "section": "skills",
+    "before": "(not listed)",
+    "after": "Lambda",
+    "citation": "skill_buckets.evidenced_elsewhere",
+    "reason": "Evidenced and relevant to this job's required skills."
+  },
+  {
+    "section": "skills",
+    "before": "(not listed)",
+    "after": "TensorFlow Serving",
+    "citation": "skill_buckets.evidenced_elsewhere",
+    "reason": "Evidenced and relevant to this job's required skills."
+  },
+  {
+    "section": "skills (not applied)",
+    "before": "(not listed)",
+    "after": "(not added)",
+    "citation": "fit_analysis core_skills.genuine_gap",
+    "reason": "'Step Functions' is a genuine gap -- no evidence anywhere in the profile, never added."
+  },
+  {
+    "section": "skills (not applied)",
+    "before": "(not listed)",
+    "after": "(not added)",
+    "citation": "fit_analysis core_skills.genuine_gap",
+    "reason": "'Kubernetes (EKS)' is a genuine gap -- no evidence anywhere in the profile, never added."
+  },
+  {
+    "section": "skills (not applied)",
+    "before": "(not listed)",
+    "after": "(not added)",
+    "citation": "fit_analysis core_skills.genuine_gap",
+    "reason": "'MLflow' is a genuine gap -- no evidence anywhere in the profile, never added."
+  },
+  {
+    "section": "skills (not applied)",
+    "before": "(not listed)",
+    "after": "(not added)",
+    "citation": "fit_analysis core_skills.genuine_gap",
+    "reason": "'Kubeflow' is a genuine gap -- no evidence anywhere in the profile, never added."
+  },
+  {
+    "section": "skills (not applied)",
+    "before": "(not listed)",
+    "after": "(not added)",
+    "citation": "fit_analysis core_skills.genuine_gap",
+    "reason": "'Terraform' is a genuine gap -- no evidence anywhere in the profile, never added."
+  },
+  {
+    "section": "skills (not applied)",
+    "before": "(not listed)",
+    "after": "(not added)",
+    "citation": "fit_analysis core_skills.genuine_gap",
+    "reason": "'CloudFormation' is a genuine gap -- no evidence anywhere in the profile, never added."
+  },
+  {
+    "section": "project_swap",
+    "before": "(no swap)",
+    "after": "(no swap)",
+    "citation": "fit_analysis.project_swap",
+    "reason": "Current on-resume projects are retained as already optimal (no verifiable, real project name was confirmed for a swap, even after being asked to correct it -- Evidence Rule)."
+  }
+]

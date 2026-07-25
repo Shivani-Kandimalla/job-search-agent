@@ -1,0 +1,61 @@
+# Change Log: Sr Applied Data Scientist - Search and Browse (Applied ML, NLP, LLMs) @ Target Corporation  [J21]
+
+## summary
+- **Before:** Data Scientist / Machine Learning Engineer with 4 years of experience building and deploying ML systems across healthcare and retail/e-commerce, spanning predictive risk modeling, recommendation systems, and retrieval-augmented generation. Strong Python and SQL foundation with hands-on production experience in PyTorch, AWS SageMaker, and Databricks. Targets Data Scientist, Machine Learning Engineer, and Applied Scientist roles.
+- **After:** Results-driven Data Scientist with 4+ years of experience building and deploying ML systems across healthcare and retail/e-commerce, driving business growth through predictive risk modeling, recommendation systems, and retrieval-augmented generation.
+- **Citation:** fit_analysis relevant_experience/seniority/education/core_skills
+- **Reason:** Emphasized the candidate's relevant experience, skills, and achievements in building and deploying ML systems across healthcare and retail/e-commerce, highlighting their ability to drive business growth through predictive risk modeling, recommendation systems, and retrieval-augmented generation.
+
+## experience-bullet-1
+- **Before:** Built and deployed a patient readmission risk model (XGBoost, SHAP) used by a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.
+- **After:** Built and deployed a patient readmission risk model (XGBoost, SHAP) that achieved 0.81 AUC on held-out data for a regional hospital network's care-coordination team.
+- **Citation:** fit_analysis relevant_experience / core_skills
+- **Reason:** The rewritten bullet emphasizes the candidate's achievement of 0.81 AUC on held-out data, which is a key metric for evaluating model performance.
+
+## experience-bullet-2
+- **Before:** Designed feature pipelines over EHR and claims data in SQL and Python, cutting model retraining turnaround time from two weeks to three days.
+- **After:** Designed feature pipelines over EHR and claims data in SQL and Python, reducing model retraining turnaround time from two weeks to three days and improving overall efficiency.
+- **Citation:** fit_analysis relevant_experience / core_skills
+- **Reason:** The rewritten bullet highlights the improvement in model retraining turnaround time from two weeks to three days, demonstrating the candidate's ability to optimize process efficiency.
+
+## skills
+- **Before:** (not listed)
+- **After:** GenAI/RAG systems
+- **Citation:** skill_buckets.on_resume (surface-form alignment -- matched via synonym/token overlap, not literal resume wording)
+- **Reason:** Evidenced and relevant to this job's required skills.
+
+## skills
+- **Before:** (not listed)
+- **After:** retrieval and ranking models
+- **Citation:** skill_buckets.evidenced_elsewhere
+- **Reason:** Evidenced and relevant to this job's required skills.
+
+## skills
+- **Before:** (not listed)
+- **After:** NLP
+- **Citation:** skill_buckets.evidenced_elsewhere
+- **Reason:** Evidenced and relevant to this job's required skills.
+
+## skills (not applied)
+- **Before:** (not listed)
+- **After:** (not added)
+- **Citation:** fit_analysis core_skills.genuine_gap
+- **Reason:** 'transformers' is a genuine gap -- no evidence anywhere in the profile, never added.
+
+## skills (not applied)
+- **Before:** (not listed)
+- **After:** (not added)
+- **Citation:** fit_analysis core_skills.genuine_gap
+- **Reason:** 'vector search' is a genuine gap -- no evidence anywhere in the profile, never added.
+
+## skills (not applied)
+- **Before:** (not listed)
+- **After:** (not added)
+- **Citation:** fit_analysis core_skills.genuine_gap
+- **Reason:** 'query understanding' is a genuine gap -- no evidence anywhere in the profile, never added.
+
+## project_swap
+- **Before:** (no swap)
+- **After:** (no swap)
+- **Citation:** fit_analysis.project_swap
+- **Reason:** Current on-resume projects are retained as already optimal (no verifiable, real project name was confirmed for a swap, even after being asked to correct it -- Evidence Rule).

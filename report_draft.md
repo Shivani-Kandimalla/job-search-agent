@@ -219,3 +219,67 @@ placeholder) can still slip through. A larger model (e.g. GPT-4-class)
 would likely be materially more consistent here without any code changes,
 since the prompt and grounding data would be unchanged — only the
 reasoning quality would improve.
+
+---
+
+## Resume Tailoring (Section 3.4)
+
+`agent/tools/tailoring.py` makes exactly **one LLM call per job** (same
+local `llama3.2` via Ollama, JSON-constrained output) to write the only
+genuinely creative content in this step — the rewritten Professional
+Summary, the two rewritten experience bullets, and (if a swap applies) one
+resume-style bullet for the swapped-in project. Everything else is decided
+deterministically in code, continuing the "LLM proposes, code enforces"
+split the Scoring + Fit Analysis workstream established:
+
+- **Which 2 bullets get rewritten** is fixed by the resume template's own
+  `AGENT-EDIT-TARGET` markers, not a runtime choice.
+- **Which skills get added or highlighted is never asked of the LLM.** It
+  is read straight out of the already-deterministic, already fact-checked
+  `fit_analysis["skill_buckets"]` from Stage 2: skills in
+  `evidenced_elsewhere` get added outright; skills in `on_resume` that
+  aren't literally the resume's own wording (a synonym/token-overlap match
+  from `scoring.py`, e.g. job says "GenAI/RAG systems," resume only says
+  "RAG") get added as a **surface-form alignment** — the exact behavior
+  Section 3.4 calls for ("resume says 'ML', job says 'machine learning'").
+  Anything in `genuine_gap` is logged, visibly, as *not* applied.
+- **The project swap is executed, never re-decided.** Stage 2's
+  `project_swap` field was already produced and fact-checked against
+  `data/portfolio.txt`; Tailoring just looks the named project up and
+  swaps it in.
+- **Evidence Rule enforcement on the LLM's prose is a numeric check, not a
+  trust call.** Every number in an original bullet (percentages, AUC
+  scores, latency, counts) must survive, unchanged, into its rewrite; the
+  summary and the swapped project's bullet may only state numbers
+  traceable to the real resume/portfolio text. A failed check gets one
+  correction turn (a second, visible LLM call), then falls back to the
+  original bullet unchanged (or a plain excerpt of the real portfolio
+  description for a swap bullet) — the same self-correction pattern
+  `fit_analysis.py` already uses for invalid project names and
+  self-contradictory seniority verdicts.
+- **One-Page Rule**: after every `pdflatex` recompile, `pypdf` verifies the
+  PDF is exactly one page. If not, content is trimmed and recompiled in a
+  fixed priority order — summary first (least information-dense), then
+  the 2 bullets, then the added skills last (cheapest content to lose) —
+  capped at 5 attempts. All 3 tailored resumes below compiled to exactly
+  one page on the first pass, so this path exists but wasn't exercised in
+  the actual run.
+
+### Sample project-swap result (for the report)
+
+Job **J18** (Flexgen Construction Technology, AI Engineer): removed
+"E-commerce Product Recommendation Engine" (Retail/E-commerce), added
+"Construction Site Safety Vision Monitor" (Construction Technology,
+Python/PyTorch/YOLO/OpenCV/edge deployment) — executing Stage 2's
+fact-checked swap recommendation. Visually confirmed in
+`outputs/J18/resume_after.pdf`: the new project entry matches the
+template's exact formatting, the other two on-resume projects are
+untouched, and the PDF is still exactly one page.
+
+### Full change logs
+
+Per-job, citation-backed change logs for all three edits (or
+"not applied, here's why") plus the project-swap decision:
+`outputs/J18/change_log.md`, `outputs/J21/change_log.md`,
+`outputs/J14/change_log.md` (JSON versions alongside for the Human Review
+workstream to consume programmatically at the review pause).
