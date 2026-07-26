@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import json
@@ -79,99 +79,6 @@ import tailoring as tailoring_tool
 # the tailoring tool's One-Page Rule creates some log entries without
 # citation/reason fields. Replace only its formatter while this orchestrator runs.
 tailoring_tool._format_change_log = safe_format_change_log
-
-import os
-
-import cover_letter as cover_letter_tool
-import fit_analysis as fit_analysis_tool
-import human_review as human_review_tool
-import llm_client as llm_client_tool
-
-
-def install_runtime_tracing() -> None:
-    """Trace existing tools without modifying teammate-owned files."""
-    if getattr(llm_client_tool, "_person5_tracing_installed", False):
-        return
-
-    original_chat = llm_client_tool.chat
-    original_memory_write = human_review_tool.write_facts_to_memory
-
-    def traced_chat(
-        *,
-        messages: list,
-        temperature: float = 0.2,
-        response_format: dict | None = None,
-    ) -> str:
-        model = os.getenv("OLLAMA_MODEL", "llama3.2")
-
-        with traced_step(
-            "llm-chat",
-            input_data={
-                "messages": messages,
-                "temperature": temperature,
-                "response_format": response_format,
-            },
-            metadata={
-                "provider": "Ollama",
-                "model": model,
-            },
-            observation_type="generation",
-        ) as generation:
-            response = original_chat(
-                messages=messages,
-                temperature=temperature,
-                response_format=response_format,
-            )
-            generation.update(output=response)
-            return response
-
-    def traced_memory_write(
-        facts: dict,
-        job_id: str,
-        review_round: int,
-        comment: str,
-        profile: dict,
-    ) -> list:
-        with traced_step(
-            "memory-write",
-            input_data={
-                "job_id": job_id,
-                "review_round": review_round,
-                "facts": facts,
-                "review_comment": comment,
-            },
-            metadata={"file": "memory/memory.json"},
-        ) as span:
-            writes = original_memory_write(
-                facts,
-                job_id,
-                review_round,
-                comment,
-                profile,
-            )
-            span.update(
-                output={
-                    "writes": writes,
-                    "memory_skills_after_write": profile.get(
-                        "memory_skills", []
-                    ),
-                }
-            )
-            return writes
-
-    # Each teammate module imported chat directly, so replace its local reference.
-    fit_analysis_tool.chat = traced_chat
-    tailoring_tool.chat = traced_chat
-    human_review_tool.chat = traced_chat
-    cover_letter_tool.chat = traced_chat
-
-    # Make memory persistence visible as its own trace span.
-    human_review_tool.write_facts_to_memory = traced_memory_write
-
-    llm_client_tool._person5_tracing_installed = True
-
-
-install_runtime_tracing()
 
 import os
 
@@ -562,7 +469,7 @@ def run_human_review(
             profile,
             input_fn=input_fn,
             max_rounds=2,
-            write_cover_letters=True,
+            write_cover_letters=False,
         )
 
         span.update(output=session)
@@ -589,15 +496,593 @@ def resolve_script_path(value: str | None) -> Path | None:
     return path
 
 
+
+AGENT_SYSTEM_PROMPT = """
+You are the single orchestration agent for a Job Search Agent.
+
+Choose exactly one next tool based on the current workflow state.
+
+Select only a tool listed under currently_valid_tools.
+Never select a tool that already appears in completed_tools.
+When currently_valid_tools contains one tool, select that tool.
+After generate_cover_letters completes, select finish.
+
+Return JSON only:
+{
+  "tool": "one tool name",
+  "reason": "one concise sentence explaining why this tool is next"
+}
+
+Rules:
+- The LLM chooses the next tool; do not describe multiple future actions.
+- At startup, the source jobs dataset exists even when filtered_job_count is 0 because filtering has not run yet.`r`n- The first tool must be filter_jobs.`r`n- Filtering must occur before scoring.
+- Scoring is deterministic code. Never invent or estimate job scores.
+- Scoring must occur before fit analysis.
+- Fit analysis must occur before resume tailoring.
+- After tailoring, the program enforces the one required human-review pause.
+- The human-review pause is structural and is not a selectable tool.
+- Cover letters can run only after human review is complete.
+- Finish only after cover letters are generated.
+- Never request another human pause.
+"""
+
+AGENT_TOOL_SCHEMAS = [
+    {
+        "name": "filter_jobs",
+        "description": (
+            "Apply deterministic candidate preferences to the jobs dataset "
+            "and log a reason for every rejected job."
+        ),
+        "arguments": {},
+    },
+    {
+        "name": "score_jobs",
+        "description": (
+            "Use deterministic Python scoring on the filtered jobs, rank "
+            "them, and select the Top 3. The LLM never creates scores."
+        ),
+        "arguments": {},
+    },
+    {
+        "name": "fit_analysis",
+        "description": (
+            "Run evidence-grounded LLM fit analysis for each Top-3 job, "
+            "including skill gaps and project-swap recommendations."
+        ),
+        "arguments": {},
+    },
+    {
+        "name": "tailor_resumes",
+        "description": (
+            "Create evidence-backed one-page tailored resumes and change "
+            "logs for all Top-3 jobs."
+        ),
+        "arguments": {},
+    },
+    {
+        "name": "generate_cover_letters",
+        "description": (
+            "Generate one-page cover-letter PDFs for resumes approved "
+            "during the structural human-review pause."
+        ),
+        "arguments": {},
+    },
+    {
+        "name": "finish",
+        "description": (
+            "Finish the workflow after all required tools and the human "
+            "review have completed."
+        ),
+        "arguments": {},
+    },
+]
+
+AGENT_TOOL_PREREQUISITES = {
+    "filter_jobs": [],
+    "score_jobs": ["filter_jobs"],
+    "fit_analysis": ["score_jobs"],
+    "tailor_resumes": ["fit_analysis"],
+    "generate_cover_letters": ["tailor_resumes"],
+}
+
+
+def planner_state_summary(state: dict) -> dict:
+    """Return a compact state representation for the orchestration LLM."""
+    return {
+        "completed_tools": state.get("completed_tools", []),
+        "filtered_job_count": len(state.get("kept", [])),
+        "rejected_job_count": len(state.get("rejected", [])),
+        "top3_job_ids": [
+            item.get("job_id")
+            for item in state.get("top3_scores", [])
+        ],
+        "human_review_complete": state.get(
+            "human_review_complete",
+            False,
+        ),
+        "approved_job_ids": state.get(
+            "approved_job_ids",
+            [],
+        ),
+        "cover_letter_count": len(
+            state.get("cover_letters", [])
+        ),
+    }
+
+
+def parse_agent_decision(response: str) -> dict:
+    """Parse and validate the orchestration LLM's JSON decision."""
+    cleaned = response.strip()
+
+    if cleaned.startswith("```"):
+        cleaned = cleaned.strip("`").strip()
+
+        if cleaned.lower().startswith("json"):
+            cleaned = cleaned[4:].strip()
+
+    decision = json.loads(cleaned)
+
+    if not isinstance(decision, dict):
+        raise ValueError("The agent decision must be a JSON object.")
+
+    tool = decision.get("tool")
+    reason = decision.get("reason")
+
+    if not isinstance(tool, str) or not tool.strip():
+        raise ValueError("The agent decision is missing 'tool'.")
+
+    if not isinstance(reason, str) or not reason.strip():
+        raise ValueError("The agent decision is missing 'reason'.")
+
+    return {
+        "tool": tool.strip(),
+        "reason": reason.strip(),
+    }
+
+
+def choose_agent_action(
+    state: dict,
+    *,
+    step_number: int,
+    correction: str | None = None,
+) -> dict:
+    """Ask the single orchestration LLM to choose the next tool."""
+    valid_tool_names = [
+        schema["name"]
+        for schema in AGENT_TOOL_SCHEMAS
+        if validate_agent_action(
+            state,
+            schema["name"],
+        ) is None
+    ]
+
+    currently_valid_tools = [
+        schema
+        for schema in AGENT_TOOL_SCHEMAS
+        if schema["name"] in valid_tool_names
+    ]
+
+    valid_tool_names_text = ", ".join(valid_tool_names)
+
+    selection_constraint = (
+        "For this reasoning step, the only legal tool "
+        f"name or names are: {valid_tool_names_text}. "
+        "Your JSON tool value must exactly match one "
+        "of those names."
+    )
+
+    prompt_data = {
+        "workflow_state": planner_state_summary(state),
+        "currently_valid_tools": currently_valid_tools,
+        "selection_constraint": selection_constraint,
+        "previous_decision_error": correction,
+    }
+
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                AGENT_SYSTEM_PROMPT
+                + "\n\n"
+                + selection_constraint
+            ),
+        },
+        {
+            "role": "user",
+            "content": json.dumps(
+                prompt_data,
+                indent=2,
+            ),
+        },
+    ]
+
+    with traced_step(
+        f"agent-reasoning-step-{step_number}",
+        input_data={
+            "system_prompt": AGENT_SYSTEM_PROMPT,
+            "messages": messages,
+            "registered_tools": AGENT_TOOL_SCHEMAS,
+            "currently_valid_tools": currently_valid_tools,
+            "workflow_state": planner_state_summary(state),
+        },
+        metadata={
+            "agent_type": "single-llm-reasoning-loop",
+            "model": os.getenv("OLLAMA_MODEL", "llama3.2"),
+            "step_number": step_number,
+        },
+        observation_type="generation",
+    ) as generation:
+        response = llm_client_tool.chat(
+            messages=messages,
+            temperature=0.0,
+            response_format={"type": "json_object"},
+        )
+
+        decision = parse_agent_decision(response)
+
+        generation.update(
+            output={
+                "raw_response": response,
+                "selected_tool": decision["tool"],
+                "selection_reason": decision["reason"],
+            }
+        )
+
+        return decision
+
+
+def validate_agent_action(state: dict, tool_name: str) -> str | None:
+    """Return an error message when the selected action is not currently valid."""
+    completed = state.get("completed_tools", [])
+
+    valid_names = {
+        tool["name"]
+        for tool in AGENT_TOOL_SCHEMAS
+    }
+
+    if tool_name not in valid_names:
+        return f"Unknown tool '{tool_name}'."
+
+    if tool_name == "finish":
+        if "generate_cover_letters" not in completed:
+            return (
+                "The workflow cannot finish before "
+                "generate_cover_letters completes."
+            )
+        return None
+
+    if tool_name in completed:
+        return f"Tool '{tool_name}' has already completed."
+
+    missing = [
+        requirement
+        for requirement in AGENT_TOOL_PREREQUISITES[tool_name]
+        if requirement not in completed
+    ]
+
+    if missing:
+        return (
+            f"Tool '{tool_name}' cannot run yet. "
+            f"Missing prerequisites: {', '.join(missing)}."
+        )
+
+    if (
+        tool_name == "generate_cover_letters"
+        and not state.get("human_review_complete", False)
+    ):
+        return (
+            "Cover letters cannot run until the structural "
+            "human-review pause is complete."
+        )
+
+    return None
+
+
+
+def execute_filter_jobs(state: dict) -> dict:
+    """Execute deterministic job filtering."""
+    jobs_path = REPO_ROOT / "data" / "jobs.csv"
+    preferences_path = (
+        REPO_ROOT / "data" / "persona_preferences.json"
+    )
+
+    jobs = load_jobs(str(jobs_path))
+    preferences = load_preferences(str(preferences_path))
+    profile = load_full_profile()
+
+    with traced_step(
+        "tool-filter-jobs",
+        input_data={
+            "job_count": len(jobs),
+            "preferences": preferences,
+        },
+        metadata={"tool": "filtering.py"},
+    ) as span:
+        kept, rejected = filter_jobs(jobs, preferences)
+
+        output = {
+            "kept_job_ids": [
+                job["job_id"]
+                for job in kept
+            ],
+            "rejected_jobs": [
+                {
+                    "job_id": job["job_id"],
+                    "reason": job["rejection_reason"],
+                }
+                for job in rejected
+            ],
+        }
+        span.update(output=output)
+
+    state.update(
+        {
+            "jobs": jobs,
+            "preferences": preferences,
+            "profile": profile,
+            "kept": kept,
+            "rejected": rejected,
+        }
+    )
+    state["completed_tools"].append("filter_jobs")
+
+    return output
+
+
+def execute_score_jobs(state: dict) -> dict:
+    """Execute deterministic scoring and Top-3 selection."""
+    with traced_step(
+        "tool-score-jobs",
+        input_data={
+            "kept_job_ids": [
+                job["job_id"]
+                for job in state["kept"]
+            ],
+            "formula": (
+                "0.5 skill_match + "
+                "0.3 experience_alignment + "
+                "0.2 domain_alignment"
+            ),
+        },
+        metadata={
+            "tool": "scoring.py",
+            "deterministic": True,
+            "llm_scoring": False,
+        },
+    ) as span:
+        ranked = score_and_rank(
+            state["kept"],
+            state["profile"],
+        )
+        top3_scores = ranked[:3]
+
+        output = {
+            "ranked_jobs": ranked,
+            "top3_job_ids": [
+                item["job_id"]
+                for item in top3_scores
+            ],
+        }
+        span.update(output=output)
+
+    save_json(
+        OUTPUTS_DIR / "ranked_jobs.json",
+        {
+            "ranked": ranked,
+            "top3_job_ids": output["top3_job_ids"],
+        },
+    )
+
+    state.update(
+        {
+            "ranked": ranked,
+            "top3_scores": top3_scores,
+            "jobs_by_id": {
+                job["job_id"]: job
+                for job in state["jobs"]
+            },
+        }
+    )
+    state["completed_tools"].append("score_jobs")
+
+    return output
+
+
+def execute_fit_analysis(state: dict) -> dict:
+    """Run fit analysis for each deterministically selected Top-3 job."""
+    top3_items = []
+
+    for position, score_breakdown in enumerate(
+        state["top3_scores"],
+        start=1,
+    ):
+        job_id = score_breakdown["job_id"]
+        job = state["jobs_by_id"][job_id]
+        job_dir = OUTPUTS_DIR / job_id
+
+        print(
+            f"[{position}/3] Running fit analysis "
+            f"for {job_id}..."
+        )
+
+        with traced_step(
+            f"tool-fit-analysis-{job_id}",
+            input_data={
+                "job": job,
+                "score_breakdown": score_breakdown,
+            },
+            metadata={
+                "tool": "fit_analysis.py",
+                "job_id": job_id,
+            },
+        ) as span:
+            fit_analysis = analyze_fit(
+                job,
+                state["profile"],
+                score_breakdown,
+            )
+            span.update(output=fit_analysis)
+
+        save_json(
+            job_dir / "fit_analysis.json",
+            fit_analysis,
+        )
+        (job_dir / "fit_analysis.txt").write_text(
+            format_report(fit_analysis),
+            encoding="utf-8",
+        )
+
+        top3_items.append(
+            {
+                "job": job,
+                "fit_analysis": fit_analysis,
+            }
+        )
+
+    state["top3_items"] = top3_items
+    state["completed_tools"].append("fit_analysis")
+
+    return {
+        "analyzed_job_ids": [
+            item["job"]["job_id"]
+            for item in top3_items
+        ]
+    }
+
+
+def execute_tailor_resumes(state: dict) -> dict:
+    """Tailor one-page resumes for all Top-3 jobs."""
+    tailored = []
+
+    for position, item in enumerate(
+        state["top3_items"],
+        start=1,
+    ):
+        job = item["job"]
+        job_id = job["job_id"]
+
+        print(
+            f"[{position}/3] Tailoring resume "
+            f"for {job_id}..."
+        )
+
+        with traced_step(
+            f"tool-tailor-resume-{job_id}",
+            input_data={
+                "job_id": job_id,
+                "fit_analysis": item["fit_analysis"],
+            },
+            metadata={
+                "tool": "tailoring.py",
+                "job_id": job_id,
+                "one_page_rule": True,
+            },
+        ) as span:
+            tailor_result = tailor_resume(
+                job,
+                item["fit_analysis"],
+                state["profile"],
+            )
+
+            output = {
+                "job_id": job_id,
+                "pdf_path": str(
+                    Path(
+                        tailor_result["pdf_path"]
+                    ).relative_to(REPO_ROOT)
+                ),
+                "change_log": tailor_result[
+                    "change_log"
+                ],
+            }
+            span.update(output=output)
+
+        item["tailor_result"] = tailor_result
+        tailored.append(output)
+
+    state["completed_tools"].append("tailor_resumes")
+
+    return {"tailored_resumes": tailored}
+
+
+def execute_generate_cover_letters(state: dict) -> dict:
+    """Generate cover letters only for approved jobs."""
+    approved = set(state["approved_job_ids"])
+    letters = []
+
+    with traced_step(
+        "tool-generate-cover-letters",
+        input_data={
+            "approved_job_ids": sorted(approved),
+        },
+        metadata={"tool": "cover_letter.py"},
+    ) as span:
+        for item in state["top3_items"]:
+            job = item["job"]
+            job_id = job["job_id"]
+
+            if job_id not in approved:
+                continue
+
+            print(
+                f"Generating cover letter for "
+                f"{job_id}..."
+            )
+
+            letter = (
+                cover_letter_tool.generate_cover_letter(
+                    job,
+                    item["fit_analysis"],
+                    state["profile"],
+                )
+            )
+
+            letters.append(
+                {
+                    "job_id": job_id,
+                    "pdf": str(
+                        Path(
+                            letter["pdf_path"]
+                        ).relative_to(REPO_ROOT)
+                    ),
+                }
+            )
+
+        span.update(output={"cover_letters": letters})
+
+    state["cover_letters"] = letters
+    state["completed_tools"].append(
+        "generate_cover_letters"
+    )
+
+    return {"cover_letters": letters}
+
+
 def run_pipeline(
     *,
     reset_memory: bool = False,
     script_path: Path | None = None,
 ) -> dict:
-    """Run the complete job-search workflow under one public trace."""
+    """Run the workflow through one LLM-controlled reasoning loop."""
     if reset_memory:
         memory_store.reset()
         print("memory/memory.json reset to empty.")
+
+    state = {
+        "completed_tools": [],
+        "human_review_complete": False,
+        "approved_job_ids": [],
+        "cover_letters": [],
+        "agent_decisions": [],
+    }
+
+    tool_handlers = {
+        "filter_jobs": execute_filter_jobs,
+        "score_jobs": execute_score_jobs,
+        "fit_analysis": execute_fit_analysis,
+        "tailor_resumes": execute_tailor_resumes,
+        "generate_cover_letters": execute_generate_cover_letters,
+    }
 
     with traced_step(
         "job-search-agent-end-to-end",
@@ -611,48 +1096,148 @@ def run_pipeline(
                 if script_path
                 else None
             ),
+            "architecture": "single LLM reasoning loop",
+            "available_tools": AGENT_TOOL_SCHEMAS,
         },
         metadata={
             "workstream": "Person 5 - orchestration and tracing",
             "trace_platform": "Langfuse",
+            "single_agent": True,
+            "llm_selects_tools": True,
+            "deterministic_scoring": True,
+            "single_human_pause": True,
         },
     ) as root_span:
-        print("Running filtering and deterministic scoring...")
-        state = run_filtering_and_scoring()
+        correction = None
+        finished = False
 
-        print(
-            "Top 3:",
-            ", ".join(
-                result["job_id"]
-                for result in state["top3_scores"]
-            ),
-        )
+        for step_number in range(1, 16):
+            decision = choose_agent_action(
+                state,
+                step_number=step_number,
+                correction=correction,
+            )
 
-        top3_items = run_top3_generation(state)
+            tool_name = decision["tool"]
+            reason = decision["reason"]
+            validation_error = validate_agent_action(
+                state,
+                tool_name,
+            )
 
-        print("\nStarting the single human-review pause...")
-        review_session = run_human_review(
-            top3_items,
-            state["profile"],
-            script_path=script_path,
-        )
+            decision_record = {
+                "step": step_number,
+                "selected_tool": tool_name,
+                "reason": reason,
+                "valid": validation_error is None,
+            }
+
+            if validation_error:
+                decision_record["validation_error"] = (
+                    validation_error
+                )
+                state["agent_decisions"].append(
+                    decision_record
+                )
+
+                print(
+                    f"[Agent step {step_number}] "
+                    f"Rejected invalid choice: {tool_name}"
+                )
+                print("Reason:", validation_error)
+
+                correction = validation_error
+                continue
+
+            state["agent_decisions"].append(decision_record)
+            correction = None
+
+            print(
+                f"\n[Agent step {step_number}] "
+                f"Selected tool: {tool_name}"
+            )
+            print("Reason:", reason)
+
+            if tool_name == "finish":
+                finished = True
+                break
+
+            with traced_step(
+                f"agent-tool-call-{tool_name}",
+                input_data={
+                    "selected_tool": tool_name,
+                    "selection_reason": reason,
+                    "workflow_state_before": (
+                        planner_state_summary(state)
+                    ),
+                },
+                metadata={
+                    "selected_by_llm": True,
+                    "agent_step": step_number,
+                },
+            ) as tool_span:
+                tool_output = tool_handlers[tool_name](
+                    state
+                )
+
+                tool_span.update(
+                    output={
+                        "tool_result": tool_output,
+                        "workflow_state_after": (
+                            planner_state_summary(state)
+                        ),
+                    }
+                )
+
+            if tool_name == "tailor_resumes":
+                print(
+                    "\nStarting the one structural "
+                    "human-review pause..."
+                )
+
+                review_session = run_human_review(
+                    state["top3_items"],
+                    state["profile"],
+                    script_path=script_path,
+                )
+
+                state["review_session"] = review_session
+                state["human_review_complete"] = True
+                state["approved_job_ids"] = review_session[
+                    "approved_job_ids"
+                ]
+                state["memory_after_session"] = (
+                    review_session["memory_after_session"]
+                )
+
+        if not finished:
+            raise RuntimeError(
+                "The orchestration agent did not finish "
+                "within 15 reasoning steps."
+            )
 
         result = {
             "status": "completed",
+            "architecture": "single LLM reasoning loop",
             "filtered_job_count": len(state["kept"]),
             "rejected_job_count": len(state["rejected"]),
             "top3_job_ids": [
-                result["job_id"]
-                for result in state["top3_scores"]
+                item["job_id"]
+                for item in state["top3_scores"]
             ],
-            "approved_job_ids": review_session[
+            "approved_job_ids": state[
                 "approved_job_ids"
             ],
-            "cover_letters": review_session[
-                "cover_letters"
+            "cover_letters": state["cover_letters"],
+            "memory_after_session": state.get(
+                "memory_after_session",
+                memory_store.load_memory(),
+            ),
+            "completed_tools": state[
+                "completed_tools"
             ],
-            "memory_after_session": review_session[
-                "memory_after_session"
+            "agent_decisions": state[
+                "agent_decisions"
             ],
         }
 
@@ -663,6 +1248,7 @@ def run_pipeline(
         root_span.update(output=result)
 
     flush_traces()
+
     save_json(
         OUTPUTS_DIR / "person5_run_summary.json",
         result,
