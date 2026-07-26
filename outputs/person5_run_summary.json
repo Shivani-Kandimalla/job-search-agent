@@ -1,0 +1,52 @@
+{
+  "status": "completed",
+  "filtered_job_count": 7,
+  "rejected_job_count": 16,
+  "top3_job_ids": [
+    "J18",
+    "J21",
+    "J14"
+  ],
+  "approved_job_ids": [
+    "J18",
+    "J21",
+    "J14"
+  ],
+  "cover_letters": [
+    {
+      "job_id": "J18",
+      "pdf": "outputs\\J18\\cover_letter.pdf"
+    },
+    {
+      "job_id": "J21",
+      "pdf": "outputs\\J21\\cover_letter.pdf"
+    },
+    {
+      "job_id": "J14",
+      "pdf": "outputs\\J14\\cover_letter.pdf"
+    }
+  ],
+  "memory_after_session": {
+    "skills_learned": [
+      {
+        "skill": "MLflow",
+        "source": "stated by candidate",
+        "review_round": 1,
+        "job_id": "J18",
+        "comment": "The summary lost the healthcare and retail/e-commerce background and reads too generic - keep that domain detail and say explicitly that the construction site safety vision work is mine. Also add MLflow and GraphQL to my skills: I have used MLflow for experiment tracking at work and GraphQL on a side project, they are just missing from my skills list.",
+        "timestamp": "2026-07-26T00:52:45"
+      },
+      {
+        "skill": "GraphQL",
+        "source": "stated by candidate",
+        "review_round": 1,
+        "job_id": "J18",
+        "comment": "The summary lost the healthcare and retail/e-commerce background and reads too generic - keep that domain detail and say explicitly that the construction site safety vision work is mine. Also add MLflow and GraphQL to my skills: I have used MLflow for experiment tracking at work and GraphQL on a side project, they are just missing from my skills list.",
+        "timestamp": "2026-07-26T00:52:45"
+      }
+    ],
+    "other_facts": []
+  },
+  "trace_id": "64ca51be3ea705990fb03f97def1168b",
+  "trace_url": "https://us.cloud.langfuse.com/project/cms1bnj1j1e72ad0dbgz0vvq9/traces/64ca51be3ea705990fb03f97def1168b"
+}
