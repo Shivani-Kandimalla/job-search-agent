@@ -488,3 +488,56 @@ python agent/tools/human_review.py --reset-memory --script scripts/demo_review_s
 The second form replays the exact reviewer session written up above
 (reject J18 with the MLflow/GraphQL comment, then approve all three), which
 is what produced every artifact quoted in this section.
+
+## Agent Orchestration and Observability (Section 3.7)
+
+The complete workflow is orchestrated by `agent/agent.py` as a **single
+LLM-based agent with one reasoning loop**. The LLM does not contain five
+independent agents or follow a fixed sequence hard-coded as the final
+decision-maker. Instead, each reasoning step receives the current workflow
+state and the schemas for the tools that are legal at that point, explains
+why a tool should be used next, and returns a structured tool selection.
+
+The five registered workflow tools are:
+
+1. `filter_jobs` — applies the deterministic filtering rules.
+2. `score_jobs` — invokes the deterministic scoring implementation; the LLM
+   selects the tool but does not invent or modify job scores.
+3. `fit_analysis` — generates one fit analysis for each selected Top-3 job.
+4. `tailor_resumes` — tailors and recompiles the three one-page resumes.
+5. `generate_cover_letters` — creates cover letters only for resumes approved
+   during human review.
+
+A separate `finish` action terminates the reasoning loop after all required
+tools have completed. Before execution, each LLM decision is validated against
+the workflow state and prerequisite rules. This prevents the model from
+repeating completed tools or skipping required stages while preserving
+LLM-driven tool selection.
+
+Exactly one structural human-review pause occurs immediately after
+`tailor_resumes` and before `generate_cover_letters`. During the recorded run,
+J18 was rejected once with feedback requesting MLflow and GraphQL, then revised
+and approved. J21 and J14 were approved, and the same-run memory learned from
+the J18 feedback was available when J14 was tailored. Cover letters were
+generated only after the review stage completed.
+
+Every reasoning call, downstream LLM call, and tool execution is wrapped in
+Langfuse tracing. The validated end-to-end demonstration completed the
+following sequence in one trace:
+
+`filter_jobs` → `score_jobs` → `fit_analysis` → `tailor_resumes` → one
+human-review pause → `generate_cover_letters` → `finish`
+
+The clean scripted demonstration can be reproduced from the repository root:
+
+```bash
+python agent/agent.py --reset-memory --script scripts/demo_review_script.json
+```
+
+The validated public Langfuse trace is:
+
+https://us.cloud.langfuse.com/project/cms1bnj1j1e72ad0dbgz0vvq9/traces/10240011ec015b56e772e5304cf7b8d5
+
+The standalone `agent/tools/human_review.py` command documented in Section 3.6
+is retained for testing the review utility by itself; `agent/agent.py` is the
+entry point for the complete single-agent workflow.
