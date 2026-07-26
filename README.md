@@ -115,6 +115,28 @@ tlmgr install titlesec enumitem      # the two packages resume.tex needs
 If `pdflatex` isn't on `PATH`, set `PDFLATEX_PATH` to its full path rather
 than editing the code — `tailoring.py` checks that env var.
 
+## Run the complete single-agent workflow
+
+From the repository root with the virtual environment activated:
+
+```bash
+python agent/agent.py
+```
+
+For a clean scripted demonstration run:
+
+```bash
+python agent/agent.py --reset-memory --script scripts/demo_review_script.json
+```
+
+`agent/agent.py` uses one LLM-based reasoning loop to select among the five registered workflow tools: filtering, deterministic scoring, fit analysis, resume tailoring, and cover-letter generation. The agent validates each selection against the current workflow state and records the reasoning and tool spans in Langfuse.
+
+Exactly one structural human-review pause occurs after resume tailoring and before cover-letter generation. Deterministic job scores are produced by the scoring tool rather than by the LLM.
+
+Validated demonstration trace:
+
+https://us.cloud.langfuse.com/project/cms1bnj1j1e72ad0dbgz0vvq9/traces/10240011ec015b56e772e5304cf7b8d5
+
 ## Tools built so far (run from the repo root, venv activated)
 
 ```bash
@@ -122,7 +144,7 @@ python agent/tools/filtering.py       # deterministic filter: 23 jobs -> 7 kept
 python agent/tools/scoring.py         # deterministic scoring of the 7 kept jobs -> Top 3
 python agent/tools/fit_analysis.py    # one LLM call per Top-3 job -> outputs/<job_id>/fit_analysis.{json,txt}
 python agent/tools/tailoring.py       # tailors + recompiles a 1-page resume per Top-3 job -> outputs/<job_id>/
-python agent/tools/human_review.py    # the ONE human pause: change logs -> approve/reject -> memory -> cover letters
+python agent/tools/human_review.py    # standalone human-review utility: approve/reject -> memory
 python agent/tools/cover_letter.py    # (standalone) regenerate the 3 cover letter PDFs
 python agent/tools/memory_store.py    # print memory/memory.json with provenance
 ```
