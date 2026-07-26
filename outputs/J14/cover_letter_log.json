@@ -1,0 +1,45 @@
+{
+  "job_id": "J14",
+  "tex_path": "/home/dhassanl/Downloads/job-search-agent-main/outputs/J14/cover_letter.tex",
+  "pdf_path": "/home/dhassanl/Downloads/job-search-agent-main/outputs/J14/cover_letter.pdf",
+  "skills_cited": [
+    {
+      "skill": "Python",
+      "citation": "resume.tex (skill_buckets.on_resume)"
+    },
+    {
+      "skill": "AWS SageMaker",
+      "citation": "resume.tex (skill_buckets.on_resume)"
+    },
+    {
+      "skill": "Docker",
+      "citation": "resume.tex (skill_buckets.on_resume)"
+    },
+    {
+      "skill": "Lambda",
+      "citation": "portfolio.txt / master skills list (skill_buckets.evidenced_elsewhere)"
+    },
+    {
+      "skill": "MLflow",
+      "citation": "memory.json (stated by candidate, review round 1, while reviewing J18)"
+    },
+    {
+      "skill": "TensorFlow Serving",
+      "citation": "portfolio.txt / master skills list (skill_buckets.evidenced_elsewhere)"
+    }
+  ],
+  "evidence_log": [
+    "first draft failed: opening: must name the role as \"MLOps Engineer, Machine Learning Engineer (Remote)\"",
+    "correction turn passed all no-fabrication checks"
+  ],
+  "reasoning": "The company hook used is 'addressing critical challenges in the healthcare revenue cycle by building and scaling machine learning solutions', which is drawn from Experian Health's description as a provider of data-driven identity, revenue cycle, and care management solutions. The candidate's experience with patient readmission risk models and feature pipelines over EHR and claims data is mapped to the job requirements for operationalizing ML models and developing scalable MLOps pipelines.",
+  "letter_text": {
+    "opening": "I am excited to apply for the MLOps Engineer, Machine Learning Engineer (Remote) role at Experian Health, where I can leverage my skills in building and deploying ML systems across healthcare and retail/e-commerce to support critical challenges in the healthcare revenue cycle.",
+    "body_paragraphs": [
+      "With 4 years of experience building and deploying ML systems across healthcare and retail/e-commerce, I have developed strong Python and SQL foundations that align with Experian Health's need for operationalizing ML models. In my current role as Data Scientist at Meridian Health Analytics, I built and deployed a patient readmission risk model using XGBoost and SHAP, achieving 0.81 AUC on held-out data. This experience demonstrates my ability to design feature pipelines over EHR and claims data in SQL and Python, cutting model retraining turnaround time from two weeks to three days.",
+      "Additionally, I have experience with AWS SageMaker and Databricks, which aligns with Experian Health's requirement for operationalizing ML models on AWS. In my project, Patient Readmission Risk Predictor, I engineered features from diagnosis codes, prior admission history, and lab results using Python and XGBoost, and used SHAP values to produce clinician-facing explanations for each risk score. This experience showcases my ability to work with healthcare-related data and develop scalable MLOps pipelines."
+    ],
+    "skills_line": "Python, AWS SageMaker, Docker, Lambda, MLflow, TensorFlow Serving",
+    "closing": "I am confident that my skills in Python, AWS SageMaker, and data science can support Experian Health's efforts to build and scale machine learning solutions addressing critical challenges in the healthcare revenue cycle. I look forward to discussing my qualifications further."
+  }
+}

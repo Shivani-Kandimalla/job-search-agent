@@ -2,21 +2,21 @@
 
 ## summary
 - **Before:** Data Scientist / Machine Learning Engineer with 4 years of experience building and deploying ML systems across healthcare and retail/e-commerce, spanning predictive risk modeling, recommendation systems, and retrieval-augmented generation. Strong Python and SQL foundation with hands-on production experience in PyTorch, AWS SageMaker, and Databricks. Targets Data Scientist, Machine Learning Engineer, and Applied Scientist roles.
-- **After:** Results-driven Data Scientist with 4+ years of experience building and deploying ML systems across healthcare and retail/e-commerce, driving business growth through predictive risk modeling, recommendation systems, and retrieval-augmented generation.
+- **After:** Results-driven Data Scientist with 4+ years of experience building and deploying ML systems across healthcare and retail/e-commerce, delivering scalable solutions that drive business impact.
 - **Citation:** fit_analysis relevant_experience/seniority/education/core_skills
-- **Reason:** Emphasized the candidate's relevant experience, skills, and achievements in building and deploying ML systems across healthcare and retail/e-commerce, highlighting their ability to drive business growth through predictive risk modeling, recommendation systems, and retrieval-augmented generation.
+- **Reason:** Emphasized the candidate's experience with ML systems, deployment, and business impact, as well as their ability to streamline processes and deliver actionable insights.
 
 ## experience-bullet-1
 - **Before:** Built and deployed a patient readmission risk model (XGBoost, SHAP) used by a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.
-- **After:** Built and deployed a patient readmission risk model (XGBoost, SHAP) that achieved 0.81 AUC on held-out data for a regional hospital network's care-coordination team.
+- **After:** Developed and deployed a patient readmission risk model (XGBoost, SHAP) achieving 0.81 AUC on held-out data, providing actionable insights to a regional hospital network's care-coordination team.
 - **Citation:** fit_analysis relevant_experience / core_skills
-- **Reason:** The rewritten bullet emphasizes the candidate's achievement of 0.81 AUC on held-out data, which is a key metric for evaluating model performance.
+- **Reason:** The new bullet emphasizes the model's performance and its impact on the hospital network's care-coordination team.
 
 ## experience-bullet-2
 - **Before:** Designed feature pipelines over EHR and claims data in SQL and Python, cutting model retraining turnaround time from two weeks to three days.
-- **After:** Designed feature pipelines over EHR and claims data in SQL and Python, reducing model retraining turnaround time from two weeks to three days and improving overall efficiency.
+- **After:** Streamlined model retraining processes by designing feature pipelines over EHR and claims data in SQL and Python, reducing turnaround time from two weeks to three days.
 - **Citation:** fit_analysis relevant_experience / core_skills
-- **Reason:** The rewritten bullet highlights the improvement in model retraining turnaround time from two weeks to three days, demonstrating the candidate's ability to optimize process efficiency.
+- **Reason:** The rewritten bullet highlights the candidate's process improvement skills and efficiency gains in model retraining.
 
 ## skills
 - **Before:** (not listed)

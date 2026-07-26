@@ -21,20 +21,29 @@ letters.
   outputs/         one folder per job: job details, resume before/after, cover letter, fit analysis
   handoff/         workstream-to-workstream handoff notes (this is our "no meetings" sync mechanism)
   ```
-- **Memory file format:** JSON. Schema:
+- **Memory file format:** JSON, written and read by
+  `agent/tools/memory_store.py`. Final schema (the two top-level keys are
+  the Foundation workstream's; the per-entry provenance fields were
+  finalized by the Human Review workstream):
   ```json
   {
     "skills_learned": [
       {
-        "skill": "GraphQL",
-        "source": "stated by candidate, review round 1",
-        "job_id": "J07",
-        "timestamp": "2026-07-23T00:00:00"
+        "skill": "MLflow",
+        "source": "stated by candidate",
+        "review_round": 1,
+        "job_id": "J18",
+        "comment": "<verbatim reviewer comment the fact came from>",
+        "timestamp": "2026-07-25T20:24:07"
       }
     ],
     "other_facts": []
   }
   ```
+  `other_facts` entries use the same fields with `fact` instead of `skill`.
+  The file is loaded at startup by `profile.load_full_profile()`, so
+  remembered skills count as evidence in scoring, fit analysis, resume
+  tailoring and cover letters on every later run.
 
 ## Environment setup (already done)
 
@@ -96,12 +105,34 @@ Verify: `pdflatex --version`. Missing packages get installed on demand:
 sudo tlmgr install <package-name>
 ```
 
+On Linux (or anywhere you don't have root), TinyTeX installs a working
+`pdflatex` into your home directory instead:
+```bash
+wget -qO- "https://yihui.org/tinytex/install-bin-unix.sh" | sh
+export PATH="$HOME/.TinyTeX/bin/x86_64-linux:$PATH"
+tlmgr install titlesec enumitem      # the two packages resume.tex needs
+```
+If `pdflatex` isn't on `PATH`, set `PDFLATEX_PATH` to its full path rather
+than editing the code — `tailoring.py` checks that env var.
+
 ## Tools built so far (run from the repo root, venv activated)
 
 ```bash
 python agent/tools/filtering.py       # deterministic filter: 23 jobs -> 7 kept
 python agent/tools/scoring.py         # deterministic scoring of the 7 kept jobs -> Top 3
 python agent/tools/fit_analysis.py    # one LLM call per Top-3 job -> outputs/<job_id>/fit_analysis.{json,txt}
+python agent/tools/tailoring.py       # tailors + recompiles a 1-page resume per Top-3 job -> outputs/<job_id>/
+python agent/tools/human_review.py    # the ONE human pause: change logs -> approve/reject -> memory -> cover letters
+python agent/tools/cover_letter.py    # (standalone) regenerate the 3 cover letter PDFs
+python agent/tools/memory_store.py    # print memory/memory.json with provenance
+```
+
+The review pause takes console input. Useful flags:
+
+```bash
+python agent/tools/human_review.py --reset-memory     # start from empty memory (clean end-to-end run)
+python agent/tools/human_review.py --no-cover-letters # stop after the pause
+python agent/tools/human_review.py --script scripts/demo_review_script.json  # replay a canned reviewer session
 ```
 
 `agent/tools/profile.py` and `agent/tools/llm_client.py` are shared helpers

@@ -39,6 +39,7 @@ import subprocess
 from fit_analysis import _extract_json
 from filtering import load_jobs
 from llm_client import chat
+from memory_store import citation_for as memory_citation_for
 from profile import load_full_profile
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -89,7 +90,7 @@ def _no_new_numbers(source_text: str, generated_text: str) -> bool:
 # Deterministic skill selection (Evidence Rule -- no LLM judgment involved)
 # ---------------------------------------------------------------------------
 
-def _skills_to_add(fit_analysis: dict, resume_text_lower: str) -> list:
+def _skills_to_add(fit_analysis: dict, resume_text_lower: str, profile: dict = None) -> list:
     """Two behaviors, both explicitly allowed by Section 3.4, both
     computed from fit_analysis's already-deterministic skill_buckets:
       - surface-form alignment: an "on_resume" bucket skill (i.e. Stage
@@ -102,8 +103,15 @@ def _skills_to_add(fit_analysis: dict, resume_text_lower: str) -> list:
         (evidenced in the portfolio, master skills list, or memory), just
         not yet listed on the resume.
     Returns an ordered, de-duplicated list of {"skill", "citation"} dicts.
+
+    `profile` is optional and only used to sharpen the citation: a skill
+    the candidate taught the agent during a review pause is cited to
+    memory.json (with its provenance) rather than to the generic
+    "evidenced_elsewhere" bucket, so the change log shows exactly where a
+    memory-sourced edit came from (Section 3.5).
     """
     buckets = fit_analysis.get("skill_buckets", {})
+    memory_skills = [s.lower() for s in (profile or {}).get("memory_skills", [])]
     additions = []
     seen = set()
 
@@ -125,10 +133,11 @@ def _skills_to_add(fit_analysis: dict, resume_text_lower: str) -> list:
         if key in seen:
             continue
         seen.add(key)
-        additions.append({
-            "skill": skill,
-            "citation": "skill_buckets.evidenced_elsewhere",
-        })
+        if any(m in key or key in m for m in memory_skills):
+            citation = memory_citation_for(skill, (profile or {}).get("memory"))
+        else:
+            citation = "skill_buckets.evidenced_elsewhere"
+        additions.append({"skill": skill, "citation": citation})
 
     return additions
 
@@ -583,7 +592,7 @@ def tailor_resume(job: dict, fit_analysis: dict, profile: dict, revision_feedbac
             bullet_state[bullet_id.replace("experience-", "").replace("-", "_")] = orig
 
     # --- Skills: surface-form alignment + evidenced additions (deterministic) ---
-    skill_additions = _skills_to_add(fit_analysis, resume_text_lower)
+    skill_additions = _skills_to_add(fit_analysis, resume_text_lower, profile)
     if skill_additions:
         tex = _insert_additional_skills(tex, skill_additions)
         for addition in skill_additions:

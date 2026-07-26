@@ -1,0 +1,12 @@
+{
+  "job_id": "J14",
+  "title": "MLOps Engineer, Machine Learning Engineer (Remote)",
+  "company": "Experian Health",
+  "industry_domain": "Healthcare / Credit & Data Services",
+  "location": "Remote (US)",
+  "required_skills": "Python, AWS SageMaker, Lambda, Step Functions, Docker, Kubernetes (EKS), MLflow, TensorFlow Serving, Kubeflow, Terraform, CloudFormation",
+  "years_experience": "3+",
+  "description": "Build and scale machine learning solutions addressing critical challenges in the healthcare revenue cycle.\nOperationalize ML models and maintain scalable, secure ML infrastructure on AWS.\nDevelop scalable MLOps pipelines for model training, validation, deployment, and monitoring using AWS services.\nCollaborate with data scientists to productionize ML models and ensure reproducibility, versioning, and traceability.\nMonitor model performance and data drift in production, implementing automated retraining and alerting.\nQualifications: Bachelor's degree in Computer Science, Engineering, Data Science, or related field; 3+ years' experience in MLOps, DevOps, or ML engineering roles; 3+ years' experience with AWS ML services; proficiency with Docker and Kubernetes/EKS; experience with MLflow, TensorFlow Serving, or Kubeflow; experience in the healthcare domain, especially claims or EHR data, is a plus.",
+  "company_details": "Experian Health is the healthcare division of Experian, providing data-driven identity, revenue cycle, and care management solutions to hospitals and health systems.",
+  "url": "https://builtin.com/job/mlops-engineer-machine-learning-engineer-remote/8103598"
+}

@@ -1,0 +1,12 @@
+{
+  "job_id": "J18",
+  "title": "AI Engineer: Computer Vision, LLMs & ML",
+  "company": "Flexgen Construction Technology",
+  "industry_domain": "Construction Technology",
+  "location": "Remote",
+  "required_skills": "Python, PyTorch, TensorFlow, JAX, RAG, embeddings, vector databases, computer vision (YOLO, Segment Anything), LangChain, LlamaIndex",
+  "years_experience": "2-3+",
+  "description": "Serve as the founding AI engineer tackling problems with no off-the-shelf answers on construction job sites.\nBuild RAG systems that understand construction terminology and domain-specific language.\nDeploy computer vision that detects safety violations from real-world job-site photos taken in poor lighting conditions.\nCreate AI assistants that answer project-status questions by reasoning across blueprints, contracts, RFIs, and daily photo logs.\nDesign real-time progress tracking that works reliably even with poor site connectivity.\nQualifications: recent graduate from a top AI program or 2-3+ years building production ML systems; shipped at least one LLM-based application used by real users; experience with RAG, embeddings, and vector databases; strong Python skills plus PyTorch, TensorFlow, or JAX; computer vision experience (YOLO, Segment Anything) is a plus.",
+  "company_details": "This construction-technology startup builds domain-aware AI tools that make construction sites safer and more efficient, applying computer vision and LLMs to real-world job-site data.",
+  "url": "https://flexgen.zya.me/job/ai-engineer-computer-vision-llms-ml"
+}

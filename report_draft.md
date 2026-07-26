@@ -283,3 +283,208 @@ Per-job, citation-backed change logs for all three edits (or
 `outputs/J18/change_log.md`, `outputs/J21/change_log.md`,
 `outputs/J14/change_log.md` (JSON versions alongside for the Human Review
 workstream to consume programmatically at the review pause).
+
+---
+
+## Human-in-the-Loop Review & Memory (Section 3.5)
+
+The agent stops **exactly once**, after all three resumes have been
+tailored and before any cover letter is written. `agent/tools/human_review.py`
+implements that pause; there is no other human gate anywhere in the
+pipeline.
+
+### What the reviewer sees and does
+
+For each of the Top 3 resumes, in ranked order, the console prints the full
+citation-backed change log — every edit as a `BEFORE` / `AFTER` pair with
+its `CITATION` and `REASON`, including the project swap and including the
+edits that were **considered and refused** (each genuine-gap skill is
+printed as `skills (not applied)` with the reason it was not added). The
+reviewer then types `approve`, or `reject` plus free-text comments.
+
+On a rejection the agent does three things, in this order:
+
+1. **Extracts candidate facts from the comment** (one LLM call). Review
+   comments mix two different kinds of content, and only one of them
+   belongs in permanent memory: *facts about the candidate* ("add MLflow
+   and GraphQL, I've used both") versus *instructions about this one edit*
+   ("the summary is too generic"). The model performs the split; a
+   code-level guard then discards any "extracted" skill whose text does not
+   literally appear in the reviewer's own comment, so a model that
+   pattern-matches the job posting cannot write a skill into memory that
+   the candidate never claimed.
+2. **Writes the surviving facts to `memory/memory.json`** with provenance,
+   and reloads the profile from disk so every later tool call sees them.
+3. **Re-runs the Tailoring Tool** with the comment passed through as
+   `revision_feedback`, capped at **2 revision rounds**. Each round logs
+   `{round, decision, feedback, facts_learned, actions_taken}` to
+   `outputs/<job_id>/review_log.{json,md}`, and stores a copy of the change
+   log exactly as it was shown that round (`change_log_shown`) -- tailoring
+   overwrites `change_log.json` on every rework, so without that copy the
+   earlier rounds' edits would not be auditable afterwards.
+
+Only after approval does the pipeline continue to the Cover Letter Tool.
+A resume that is still rejected after the 2-round cap is not silently
+shipped: the reviewer is asked, within the same pause, whether the last
+version stands or the job is dropped (a dropped job gets no cover letter).
+
+### Memory file schema
+
+```json
+{
+  "skills_learned": [
+    {
+      "skill": "MLflow",
+      "source": "stated by candidate",
+      "review_round": 1,
+      "job_id": "J18",
+      "comment": "<the verbatim reviewer comment the fact came from>",
+      "timestamp": "2026-07-25T19:58:04"
+    }
+  ],
+  "other_facts": []
+}
+```
+
+`memory/memory.json` is loaded at startup by `profile.load_full_profile()`,
+so remembered skills count as evidence in the Scoring Tool, the Fit
+Analysis Tool, the Tailoring Tool and the Cover Letter Tool on **every
+later run**, not just the run that learned them. Scope is limited to skills
+and candidate facts, per the assignment; tailoring instructions are never
+written to memory.
+
+### One full human review round (from the recorded end-to-end run)
+
+**Job J18 — AI Engineer: Computer Vision, LLMs & ML @ Flexgen Construction
+Technology. Round 1: REJECTED.**
+
+> **Feedback given:** "The summary lost the healthcare and retail/e-commerce
+> background and reads too generic — keep that domain detail and say
+> explicitly that the construction site safety vision work is mine. Also add
+> MLflow and GraphQL to my skills: I have used MLflow for experiment
+> tracking at work and GraphQL on a side project, they are just missing from
+> my skills list."
+
+Actions the agent took and logged (`outputs/J18/review_log.md`):
+
+- `MEMORY WRITE: remembered skill 'MLflow' (stated by candidate, review round 1, job J18)`
+- `MEMORY WRITE: remembered skill 'GraphQL' (stated by candidate, review round 1, job J18)`
+- `MEMORY REJECTED: proposed other_fact "I'm open to hybrid roles in Seattle" — not supported by the reviewer's comment` *(the guard firing on a fact the model invented; it never reached the memory file)*
+- `Re-ran the Tailoring Tool with the reviewer's comment as revision feedback; sections that changed: experience-bullet-1, experience-bullet-2, summary.`
+
+The reworked summary (round 1 as shown to the reviewer → round 2 after the
+rework; both rounds are preserved verbatim in
+`outputs/J18/review_log.json`'s `change_log_shown` field):
+
+> *Round 1 (rejected):* "Results-driven AI engineer with a Master's degree
+> in Data Science, seeking to leverage expertise in machine learning and
+> computer vision to drive innovation in construction technology."
+>
+> *Round 2 (after rework):* "As a seasoned Data Scientist with experience
+> in predictive risk modeling, recommendation systems, and
+> retrieval-augmented generation, I leverage my strong Python foundation to
+> tackle complex problems in healthcare and retail/e-commerce. Most
+> recently, I developed a computer-vision pipeline that analyzes job-site
+> camera photos to detect personal protective equipment (PPE) violations,
+> utilizing fine-tuned YOLO object detection for edge deployment on
+> low-connectivity sites."
+
+Both of the reviewer's tailoring instructions landed: the healthcare and
+retail/e-commerce domain detail is back, and the construction site safety
+vision work is now stated as the candidate's own (grounded in the
+"Construction Site Safety Vision Monitor" portfolio project that the same
+job's project swap had already put on the resume).
+
+**Round 2: APPROVED.**
+
+### One memory example (comment → memory entry → reuse)
+
+The same comment taught the agent **MLflow**, a skill that is deliberately
+absent from `data/persona_preferences.json`'s master skills list. Its reuse
+is visible two jobs later in the *same* run, with no repetition from the
+reviewer:
+
+- J14 (Experian Health, MLOps Engineer) lists `MLflow` in its required
+  skills. Before the review pause it sat in that job's `genuine_gap`
+  bucket, so the Tailoring Tool was forbidden from adding it.
+- Before J14's resume was shown to the reviewer, the agent recomputed that
+  job's deterministic skill buckets against the *current* memory
+  (`refresh_fit_analysis_with_memory`). `MLflow` moved
+  `genuine_gap → evidenced_elsewhere`, and the resume was re-tailored.
+- `outputs/J14/change_log.md` now contains:
+
+  ```
+  ## skills
+  - Before: (not listed)
+  - After: MLflow
+  - Citation: memory.json (stated by candidate, review round 1, while reviewing J18)
+  ```
+
+  and the compiled `outputs/J14/resume_after.pdf` carries
+  `Additional (aligned with this role): Lambda, MLflow, TensorFlow Serving`.
+- `outputs/J14/review_log.md` records the carry-over as a "round 0" entry,
+  so it is auditable that the change happened *before* any reviewer input
+  on that job.
+
+**Terraform, Kubeflow, Step Functions and CloudFormation stay in J14's
+`genuine_gap` bucket and never reach the resume** — the candidate never
+claimed them, so the agent never adds them. That contrast (MLflow added,
+Terraform refused) is the Evidence Rule and the memory feature working
+together.
+
+## Cover Letter Tool (Section 3.6)
+
+`agent/tools/cover_letter.py` runs once per **approved** job and produces a
+one-page PDF at `outputs/<job_id>/cover_letter.pdf`.
+
+**Tooling choice:** the letter is authored as LaTeX and compiled with the
+same `pdflatex` toolchain the resume already requires (rather than adding a
+separate Python PDF library). That means zero new dependencies for a
+grader, a letter that visually matches the resume, and the same
+`pypdf`-based one-page verification used by the Tailoring Tool. The
+compile / page-count / LaTeX-escaping helpers are imported from
+`tailoring.py`, so there is a single implementation of that plumbing.
+
+**Structure** (all six elements the assignment lists): contact header
+parsed straight out of `resume/resume.tex` (so the letter and resume can
+never disagree about the candidate's details) → date → company block →
+greeting → an opening naming the exact role and company with a hook taken
+from that job's `Company Details` CSV field → one or two body paragraphs
+mapping real resume/portfolio experience onto the job description → a
+skills line → closing.
+
+**No-fabrication enforcement** mirrors the tailoring step — the LLM writes
+prose, code decides what may be claimed:
+
+- The **skills line is not written by the model.** It is built from the
+  deterministic `skill_buckets` (on-resume + evidenced-elsewhere, which
+  includes memory-learned skills), each item carrying its own citation in
+  `outputs/<job_id>/cover_letter_log.json`.
+- **Genuine-gap skills are forbidden phrases.** If any appears anywhere in
+  the generated prose — even while describing what the company does — the
+  draft is rejected, the model gets one correction turn, and a
+  deterministic fallback letter (assembled only from the job posting's own
+  Company Details, the resume's own Professional Summary, and the featured
+  portfolio project) is used if it still fails. In the recorded run this
+  fired once: the J21 draft used the phrase "query understanding" (a
+  genuine gap for this candidate) and the correction turn removed it.
+- Every **number** in the prose must be traceable to the real resume or
+  portfolio text (the same `_no_new_numbers` check the resume tool uses).
+- The **role title, company name and contact details are inserted by the
+  template**, not restated by the model.
+- **One-Page Rule**: page count is verified with `pypdf` after each
+  compile; if it overflows, the second body paragraph is dropped first,
+  then the first is shortened, then the opening — the skills line and the
+  closing are required elements and are never dropped. All three letters in
+  the recorded run compiled to exactly one page.
+
+### Reproducing the recorded review + cover letter run
+
+```bash
+python agent/tools/human_review.py --reset-memory                            # interactive
+python agent/tools/human_review.py --reset-memory --script scripts/demo_review_script.json
+```
+
+The second form replays the exact reviewer session written up above
+(reject J18 with the MLflow/GraphQL comment, then approve all three), which
+is what produced every artifact quoted in this section.

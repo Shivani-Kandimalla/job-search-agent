@@ -1,0 +1,113 @@
+{
+  "job_id": "J14",
+  "title": "MLOps Engineer, Machine Learning Engineer (Remote)",
+  "company": "Experian Health",
+  "approved": true,
+  "rounds": [
+    {
+      "round": 0,
+      "decision": "memory carry-over (no reviewer input)",
+      "feedback": "",
+      "facts_learned": [],
+      "actions_taken": [
+        "Memory learned earlier in this run made these required skills evidenced for this job: MLflow. The resume was re-tailored with them BEFORE the reviewer saw it -- the candidate did not have to repeat themselves (memory.json (stated by candidate, review round 1, while reviewing J18))."
+      ]
+    },
+    {
+      "round": 1,
+      "decision": "approve",
+      "feedback": "",
+      "facts_learned": [],
+      "actions_taken": [
+        "Reviewer approved the tailored resume."
+      ],
+      "change_log_shown": [
+        {
+          "section": "summary",
+          "before": "Data Scientist / Machine Learning Engineer with 4 years of experience building and deploying ML systems across healthcare and retail/e-commerce, spanning predictive risk modeling, recommendation systems, and retrieval-augmented generation. Strong Python and SQL foundation with hands-on production experience in PyTorch, AWS SageMaker, and Databricks. Targets Data Scientist, Machine Learning Engineer, and Applied Scientist roles.",
+          "after": "Results-driven MLOps Engineer with 4 years of experience building and deploying machine learning systems across healthcare and retail/e-commerce, seeking to leverage expertise in AWS SageMaker and Python to drive scalability and efficiency in Experian Health's revenue cycle challenges.",
+          "citation": "fit_analysis relevant_experience/seniority/education/core_skills",
+          "reason": "Emphasized the candidate's experience with predictive modeling, collaboration with clinical stakeholders, and expertise in AWS SageMaker and Python to align with the job posting's requirements."
+        },
+        {
+          "section": "experience-bullet-1",
+          "before": "Built and deployed a patient readmission risk model (XGBoost, SHAP) used by a regional hospital network's care-coordination team, achieving 0.81 AUC on held-out data.",
+          "after": "Developed and deployed a patient readmission risk model (XGBoost, SHAP) that achieved 0.81 AUC on held-out data, demonstrating expertise in predictive modeling and collaboration with clinical stakeholders.",
+          "citation": "fit_analysis relevant_experience / core_skills",
+          "reason": "Focused on highlighting the candidate's ability to develop and deploy a patient readmission risk model that achieved strong AUC results, demonstrating their expertise in predictive modeling."
+        },
+        {
+          "section": "experience-bullet-2",
+          "before": "Designed feature pipelines over EHR and claims data in SQL and Python, cutting model retraining turnaround time from two weeks to three days.",
+          "after": "Streamlined model retraining processes by designing feature pipelines over EHR and claims data in SQL and Python, reducing turnaround time from two weeks to three days and improving overall efficiency.",
+          "citation": "fit_analysis relevant_experience / core_skills",
+          "reason": "Emphasized the efficiency gains made by streamlining model retraining processes, showcasing the candidate's ability to improve overall process efficiency and reduce turnaround time."
+        },
+        {
+          "section": "skills",
+          "before": "(not listed)",
+          "after": "Lambda",
+          "citation": "skill_buckets.evidenced_elsewhere",
+          "reason": "Evidenced and relevant to this job's required skills."
+        },
+        {
+          "section": "skills",
+          "before": "(not listed)",
+          "after": "MLflow",
+          "citation": "memory.json (stated by candidate, review round 1, while reviewing J18)",
+          "reason": "Evidenced and relevant to this job's required skills."
+        },
+        {
+          "section": "skills",
+          "before": "(not listed)",
+          "after": "TensorFlow Serving",
+          "citation": "skill_buckets.evidenced_elsewhere",
+          "reason": "Evidenced and relevant to this job's required skills."
+        },
+        {
+          "section": "skills (not applied)",
+          "before": "(not listed)",
+          "after": "(not added)",
+          "citation": "fit_analysis core_skills.genuine_gap",
+          "reason": "'Step Functions' is a genuine gap -- no evidence anywhere in the profile, never added."
+        },
+        {
+          "section": "skills (not applied)",
+          "before": "(not listed)",
+          "after": "(not added)",
+          "citation": "fit_analysis core_skills.genuine_gap",
+          "reason": "'Kubernetes (EKS)' is a genuine gap -- no evidence anywhere in the profile, never added."
+        },
+        {
+          "section": "skills (not applied)",
+          "before": "(not listed)",
+          "after": "(not added)",
+          "citation": "fit_analysis core_skills.genuine_gap",
+          "reason": "'Kubeflow' is a genuine gap -- no evidence anywhere in the profile, never added."
+        },
+        {
+          "section": "skills (not applied)",
+          "before": "(not listed)",
+          "after": "(not added)",
+          "citation": "fit_analysis core_skills.genuine_gap",
+          "reason": "'Terraform' is a genuine gap -- no evidence anywhere in the profile, never added."
+        },
+        {
+          "section": "skills (not applied)",
+          "before": "(not listed)",
+          "after": "(not added)",
+          "citation": "fit_analysis core_skills.genuine_gap",
+          "reason": "'CloudFormation' is a genuine gap -- no evidence anywhere in the profile, never added."
+        },
+        {
+          "section": "project_swap",
+          "before": "(no swap)",
+          "after": "(no swap)",
+          "citation": "fit_analysis.project_swap",
+          "reason": "Current on-resume projects are retained as already optimal (no verifiable, real project name was confirmed for a swap, even after being asked to correct it -- Evidence Rule)."
+        }
+      ]
+    }
+  ],
+  "memory_writes": []
+}

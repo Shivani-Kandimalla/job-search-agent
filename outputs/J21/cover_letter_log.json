@@ -1,0 +1,36 @@
+{
+  "job_id": "J21",
+  "tex_path": "/home/dhassanl/Downloads/job-search-agent-main/outputs/J21/cover_letter.tex",
+  "pdf_path": "/home/dhassanl/Downloads/job-search-agent-main/outputs/J21/cover_letter.pdf",
+  "skills_cited": [
+    {
+      "skill": "Embeddings",
+      "citation": "resume.tex (skill_buckets.on_resume)"
+    },
+    {
+      "skill": "GenAI/RAG systems",
+      "citation": "resume.tex (skill_buckets.on_resume)"
+    },
+    {
+      "skill": "retrieval and ranking models",
+      "citation": "portfolio.txt / master skills list (skill_buckets.evidenced_elsewhere)"
+    },
+    {
+      "skill": "NLP",
+      "citation": "portfolio.txt / master skills list (skill_buckets.evidenced_elsewhere)"
+    }
+  ],
+  "evidence_log": [
+    "first draft failed: opening: must name the role as \"Sr Applied Data Scientist - Search and Browse (Applied ML, NLP, LLMs)\"; the letter uses the forbidden phrase(s) \"query understanding\" -- these are skills the candidate does not have. Delete those exact words everywhere they appear (including in descriptions of the company or the role) and rewrite those sentences around work the candidate has actually done",
+    "correction turn still failed: opening: must name the role as \"Sr Applied Data Scientist - Search and Browse (Applied ML, NLP, LLMs)\" -- using deterministic fallback"
+  ],
+  "reasoning": "Deterministic fallback letter -- the model's two drafts did not pass the no-fabrication checks, so the letter was assembled verbatim from the job posting's Company Details, the resume's own Professional Summary, and the featured portfolio project.",
+  "letter_text": {
+    "opening": "I am writing to apply for the Sr Applied Data Scientist - Search and Browse (Applied ML, NLP, LLMs) position at Target Corporation. Target Corporation is a major American retail chain operating both physical stores and a large e-commerce platform, investing heavily in AI-driven search and personalization. That is the kind of problem I want to work on next.",
+    "body_paragraphs": [
+      "Data Scientist / Machine Learning Engineer with 4 years of experience building and deploying ML systems across healthcare and retail/e-commerce, spanning predictive risk modeling, recommendation systems, and retrieval-augmented generation. Strong Python and SQL foundation with hands-on production experience in PyTorch, AWS SageMaker, and Databricks. Targets Data Scientist, Machine Learning Engineer, and Applied Scientist roles. My \"Patient Readmission Risk Predictor\" project (Python, XGBoost, scikit-learn, SQL, SHAP, Pandas; Healthcare) is the closest match to this role's day-to-day work. The requirements I can evidence directly from my resume and portfolio are Embeddings, GenAI/RAG systems, retrieval and ranking models, NLP."
+    ],
+    "skills_line": "Embeddings, GenAI/RAG systems, retrieval and ranking models, NLP",
+    "closing": "I would welcome the chance to discuss how my background fits the Sr Applied Data Scientist - Search and Browse (Applied ML, NLP, LLMs) role at Target Corporation. Thank you for your time and consideration."
+  }
+}

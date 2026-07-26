@@ -1,0 +1,52 @@
+{
+  "job_id": "J18",
+  "tex_path": "/home/dhassanl/Downloads/job-search-agent-main/outputs/J18/cover_letter.tex",
+  "pdf_path": "/home/dhassanl/Downloads/job-search-agent-main/outputs/J18/cover_letter.pdf",
+  "skills_cited": [
+    {
+      "skill": "Python",
+      "citation": "resume.tex (skill_buckets.on_resume)"
+    },
+    {
+      "skill": "PyTorch",
+      "citation": "resume.tex (skill_buckets.on_resume)"
+    },
+    {
+      "skill": "TensorFlow",
+      "citation": "resume.tex (skill_buckets.on_resume)"
+    },
+    {
+      "skill": "RAG",
+      "citation": "resume.tex (skill_buckets.on_resume)"
+    },
+    {
+      "skill": "embeddings",
+      "citation": "resume.tex (skill_buckets.on_resume)"
+    },
+    {
+      "skill": "LangChain",
+      "citation": "resume.tex (skill_buckets.on_resume)"
+    },
+    {
+      "skill": "vector databases",
+      "citation": "portfolio.txt / master skills list (skill_buckets.evidenced_elsewhere)"
+    },
+    {
+      "skill": "computer vision (YOLO, Segment Anything)",
+      "citation": "portfolio.txt / master skills list (skill_buckets.evidenced_elsewhere)"
+    }
+  ],
+  "evidence_log": [
+    "first draft passed all no-fabrication checks"
+  ],
+  "reasoning": "The company hook used is from the 'Company Details' blurb, which highlights the company's focus on making construction sites safer and more efficient with domain-aware AI tools. The real experience mapped to this role includes the Construction Site Safety Vision Monitor project, which shows hands-on experience with YOLO object detection, and the Customer Support RAG Chatbot project, which demonstrates the potential of retrieval-augmented generation for improving customer support efficiency.",
+  "letter_text": {
+    "opening": "I am excited to apply for the AI Engineer: Computer Vision, LLMs & ML role at Flexgen Construction Technology, a company that is revolutionizing the construction industry with its domain-aware AI tools, and I am particularly drawn to this position because of the opportunity to build RAG systems that understand construction terminology and domain-specific language.",
+    "body_paragraphs": [
+      "With my experience in building and deploying ML systems across healthcare and retail/e-commerce, I believe I can leverage my strong Python skills and PyTorch expertise to tackle problems with no off-the-shelf answers on construction job sites. My work on the Patient Readmission Risk Predictor project has shown me the value of using SHAP values to produce clinician-facing explanations for each risk score, which aligns with the company's goal of making construction sites safer and more efficient.",
+      "I am also excited about the opportunity to deploy computer vision that detects safety violations from real-world job-site photos taken in poor lighting conditions. My experience with the Construction Site Safety Vision Monitor project has given me hands-on experience with YOLO object detection, which I believe can be adapted to this role. Furthermore, my work on the Customer Support RAG Chatbot project has shown me the potential of retrieval-augmented generation for improving customer support efficiency, a skill that could be valuable in this position."
+    ],
+    "skills_line": "Python, PyTorch, TensorFlow, RAG, embeddings, LangChain, vector databases, computer vision (YOLO, Segment Anything)",
+    "closing": "I am excited about the opportunity to contribute my skills and experience to Flexgen Construction Technology and help tackle problems in the construction industry. Thank you for considering my application."
+  }
+}
