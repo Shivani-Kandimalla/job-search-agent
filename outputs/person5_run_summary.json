@@ -1,5 +1,6 @@
 {
   "status": "completed",
+  "architecture": "single LLM reasoning loop",
   "filtered_job_count": 7,
   "rejected_job_count": 16,
   "top3_job_ids": [
@@ -47,6 +48,51 @@
     ],
     "other_facts": []
   },
-  "trace_id": "64ca51be3ea705990fb03f97def1168b",
-  "trace_url": "https://us.cloud.langfuse.com/project/cms1bnj1j1e72ad0dbgz0vvq9/traces/64ca51be3ea705990fb03f97def1168b"
+  "completed_tools": [
+    "filter_jobs",
+    "score_jobs",
+    "fit_analysis",
+    "tailor_resumes",
+    "generate_cover_letters"
+  ],
+  "agent_decisions": [
+    {
+      "step": 1,
+      "selected_tool": "filter_jobs",
+      "reason": "No other tools are currently valid for this workflow state.",
+      "valid": true
+    },
+    {
+      "step": 2,
+      "selected_tool": "score_jobs",
+      "reason": "Since filtering has occurred and human review is not yet complete, scoring the filtered jobs is the next logical step.",
+      "valid": true
+    },
+    {
+      "step": 3,
+      "selected_tool": "fit_analysis",
+      "reason": "Since filtering and scoring have been completed, the next logical step is to run evidence-grounded LLM fit analysis for each Top-3 job.",
+      "valid": true
+    },
+    {
+      "step": 4,
+      "selected_tool": "tailor_resumes",
+      "reason": "Since filtering and scoring have been completed, and human review is not yet complete, the next step is to tailor resumes for the top-3 jobs.",
+      "valid": true
+    },
+    {
+      "step": 5,
+      "selected_tool": "generate_cover_letters",
+      "reason": "Since human review is complete and no other tools can be selected, the next step is to generate cover letters.",
+      "valid": true
+    },
+    {
+      "step": 6,
+      "selected_tool": "finish",
+      "reason": "All required tools and human review have been completed.",
+      "valid": true
+    }
+  ],
+  "trace_id": "10240011ec015b56e772e5304cf7b8d5",
+  "trace_url": "https://us.cloud.langfuse.com/project/cms1bnj1j1e72ad0dbgz0vvq9/traces/10240011ec015b56e772e5304cf7b8d5"
 }
